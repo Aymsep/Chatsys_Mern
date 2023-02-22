@@ -5,6 +5,31 @@ import './Form.scss'
 const Form = () => {
     const [isActive, setActive] = useState(false);
 
+    const handleSignup = (e) => {
+        e.preventDefault();
+        const name = document.getElementById('up_name')
+        const email = document.getElementById('up_email')
+        const password = document.getElementById('up_password')
+        
+        fetch('http://localhost:3005/auth',{
+        method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                name: name.value,
+                email: email.value,
+                password: password.value
+            })
+        })
+        
+        
+        
+       
+       
+       
+
+    }
+
+
     useEffect(() => {
       const container = document.getElementById('container');
       const signUpButton = document.getElementById('signUp');
@@ -40,10 +65,12 @@ const Form = () => {
 				<a href="#" className="social"><i className="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your email for registration</span>
-			<input type="text" placeholder="Name" />
-			<input type="email" placeholder="Email" />
-			<input type="password" placeholder="Password" />
-			<button >Sign Up</button>
+
+			<input id='up_name' type="text" placeholder="Name" />
+			<input id='up_email' type="email" placeholder="Email" />
+			<input id='up_password' type="password" placeholder="Password" />
+
+			<button  onClick={(e) =>handleSignup(e)} >Sign Up</button>
 		</form>
 	</div>
 	<div className="form-container sign-in-container">
@@ -71,7 +98,10 @@ const Form = () => {
 			<div className="overlay-panel overlay-right">
 				<h1>Hello, Friend!</h1>
 				<p>Enter your personal details and start journey with us</p>
-				<button className="ghost" id="signUp">Sign Up</button>
+				<button
+                 className="ghost" 
+                 id="signUp"   
+                 >Sign Up</button>
 			</div>
 		</div>
 	</div>
