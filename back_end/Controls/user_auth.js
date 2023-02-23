@@ -3,6 +3,7 @@ const uuid = require('uuid')
 const { use } = require('../Routes/user_auth')
 const users = []
 const User_db = require('../Schemas/user_auth')
+const jwt = require("jsonwebtoken")
 
 
 exports.login =  (req, res, next) => {
@@ -14,13 +15,16 @@ exports.login =  (req, res, next) => {
         }
         bcrypt.compare(req.body.password, user_check.password).then(valid=>{
             if(!valid){
-                res.status(404).send({
+                res.status(401).send({
                     message:"password is incorrect"
                 })
             }
-            res.status(200).send({
-                message:"you logged in"
-            })
+            const token = jwt.sign(
+                {userId:user_check._id},
+                process.env.JWT_SECRET,
+                )
+                res.cookie('token',token).status(201).json('ok')
+                
         })
         
         
