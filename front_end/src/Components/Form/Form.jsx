@@ -7,28 +7,35 @@ const Form = () => {
 
     const handleSignup = (e) => {
         e.preventDefault();
-        const name = document.getElementById('up_name')
-        const email = document.getElementById('up_email')
-        const password = document.getElementById('up_password')
+        const up_name = document.getElementById('up_name')
+        const up_email = document.getElementById('up_email')
+        const up_password = document.getElementById('up_password')
         
-        fetch('http://localhost:3005/auth',{
+        fetch('http://localhost:3005/register',{
         method: 'POST',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify({
-                name: name.value,
-                email: email.value,
-                password: password.value
+                name: up_name.value,
+                email: up_email.value,
+                password: up_password.value
             })
         })
-        
-        
-        
-       
-       
-       
-
     }
 
+    const handleSignin = (e)=>{
+        e.preventDefault();
+        const in_email = document.getElementById('in_email')
+        const in_password = document.getElementById('in_password')
+
+        fetch('http://localhost:3005/login',{
+            method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email: in_email.value,
+                    password: in_password.value
+                })
+            })
+    }
 
     useEffect(() => {
       const container = document.getElementById('container');
@@ -66,9 +73,9 @@ const Form = () => {
 			</div>
 			<span>or use your email for registration</span>
 
-			<input id='up_name' type="text" placeholder="Name" />
-			<input id='up_email' type="email" placeholder="Email" />
-			<input id='up_password' type="password" placeholder="Password" />
+			<input id='up_name' type="text" placeholder="Name" required/>
+			<input id='up_email' type="email" placeholder="Email" required/>
+			<input id='up_password' type="password" placeholder="Password" required />
 
 			<button  onClick={(e) =>handleSignup(e)} >Sign Up</button>
 		</form>
@@ -82,10 +89,12 @@ const Form = () => {
 				<a href="#" className="social"><i className="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your account</span>
-			<input type="email" placeholder="Email" />
-			<input type="password" placeholder="Password" />
+
+			<input  id="in_email" type="email" placeholder="Email" />
+			<input  id="in_password" type="password" placeholder="Password" />
+
 			<a href="#">Forgot your password?</a>
-			<button >Sign In</button>
+			<button onClick={(e)=>handleSignin(e)} >Sign In</button>
 		</form>
 	</div>
 	<div className="overlay-container">
@@ -107,14 +116,6 @@ const Form = () => {
 	</div>
 </div>
 
-<footer>
-	<p>
-		Created with <i className="fa fa-heart"></i> by
-		<a target="_blank" href="https://florin-pop.com">Florin Pop</a>
-		- Read how I created this and how you can join the challenge
-		<a target="_blank" href="https://www.florin-pop.com/blog/2019/03/double-slider-sign-in-up-form/">here</a>.
-	</p>
-</footer>
 
     </div>
   )
