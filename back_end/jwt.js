@@ -8,16 +8,16 @@ const createToken = (user)=>{
 }
 
 const validateToken = (req, res, next) => {
-    if(!accessToken) return res.status(400).json({err:"user not auth"})
-    try{
-            const validToken = verify(accessToken,process.env.JWT_SECRET)
-            if(validToken){
-                    req.authenticated = true
-                    return next()
-                }
-            }catch(err){
-                    res.status(400).json({err:err.message})
-                }
+    // if(!accessToken) return res.status(400).json({err:"user not auth"})
+    // try{
+        //     const validToken = verify(accessToken,process.env.JWT_SECRET)
+        //     if(validToken){
+            //         req.authenticated = true
+            //         return next()
+            //     }
+            // }catch(err){
+                //     res.status(400).json({err:err.message})
+                // }
                 next()
             }
 
