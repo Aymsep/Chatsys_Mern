@@ -1,33 +1,39 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect, useContext} from 'react'
 import './Form.scss'
+
+import { Usercontext } from '../../Usercontext';
 
 
 const Form = () => {
+    const {setusername,setid} = useContext(Usercontext)
     const [isActive, setActive] = useState(false);
 
-    const handleSignup = (e) => {
-        e.preventDefault();
-        const up_name = document.getElementById('up_name')
-        const up_email = document.getElementById('up_email')
-        const up_password = document.getElementById('up_password')
-        
-        fetch('http://localhost:3005/register',{
+    
+    const handleSignup = async (e) => {
+      e.preventDefault();
+      const up_name = document.getElementById('up_name')
+      const up_email = document.getElementById('up_email')
+      const up_password = document.getElementById('up_password')
+      
+      const response = await fetch('http://localhost:3005/register',{
         method: 'POST',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                name: up_name.value,
-                email: up_email.value,
-                password: up_password.value
-            })
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          name: up_name.value,
+          email: up_email.value,
+          password: up_password.value
         })
-    }
+        })
+        const {fullname,id} = await response.json()
+        
+       
+      }
 
-    const handleSignin = (e)=>{
+    const handleSignin = async (e)=>{
         e.preventDefault();
         const in_email = document.getElementById('in_email')
         const in_password = document.getElementById('in_password')
-
-        fetch('http://localhost:3005/login',{
+        const response = await fetch('http://localhost:3005/login',{
             method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -35,6 +41,9 @@ const Form = () => {
                     password: in_password.value
                 })
             })
+        const data = await response.json();
+        setusername(data.fullname)
+        setid(data.id)
     }
 
     useEffect(() => {

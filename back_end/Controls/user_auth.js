@@ -4,6 +4,11 @@ const { use } = require('../Routes/user_auth')
 const users = []
 const User_db = require('../Schemas/user_auth')
 const jwt = require("jsonwebtoken")
+const {createToken,validateToken}  =require("../jwt")
+
+
+
+
 
 
 exports.login =  (req, res, next) => {
@@ -15,15 +20,26 @@ exports.login =  (req, res, next) => {
         }
         bcrypt.compare(req.body.password, user_check.password).then(valid=>{
             if(!valid){
-                res.status(401).send({
+                return res.status(401).send({
                     message:"password is incorrect"
                 })
             }
-            const token = jwt.sign(
-                {userId:user_check._id},
-                process.env.JWT_SECRET,
-                )
-                res.cookie('token',token).status(201).json('ok')
+            //     jwt.sign({userId:user_check._id,username:user_check.fullname}, process.env.JWT_SECRET, {}, (err, token) => {
+            //     if (err) throw err;
+            //     res.cookie('token', token, {sameSite:'none', secure:true}).status(201).json({
+            //       id: createdUser._id,
+            //     });
+            //   });
+            res.status(200).json({
+                id:user_check._id,
+                fullname:user_check.fullname,
+            })
+            next()
+            // const token = jwt.sign(
+            //     {userId:user_check._id},
+            //     process.env.JWT_SECRET,
+            //     )
+            //     res.cookie('token',token).status(201).json('ok')
                 
         })
         
@@ -55,10 +71,7 @@ exports.login =  (req, res, next) => {
 
 
 
-
-
 exports.register = async (req, res, next) => {
-    console.log(req.body)
    try{
     const hashedpass = await bcrypt.hash(req.body.password,10)
     const user  = new User_db ({
@@ -66,17 +79,16 @@ exports.register = async (req, res, next) => {
         email: req.body.email,
         password: hashedpass
     })
-    console.log(user)
     user.save().then(()=>{
         return res.status(200).json({
-            success: true,
+            fullname: user.fullname,
+            id: user._id      
         })
     }).catch(err=>{
         return res.status(500).json({
             error:"choose another email"
         })
     })
-       users.push(user)
    }catch{
     res.status(500).json({message: 'user not created'})
    }
@@ -84,6 +96,16 @@ exports.register = async (req, res, next) => {
 }
 
 
-exports.getusers =  (req, res, next) => {
-    res.status(200).send(users)
+exports.getprofile =  (req, res, next) => {
+    // const token = req.cookies?.token
+    // console.log(token)
+    // if(token){
+    //     jwt.verify(token,process.env.JWT_SECRET,{},(err,userdata)=>{
+    //         if(err) throw err;
+    //         res.json(userdata)
+    //     })
+    // }else{
+    //     res.status(401).json('no token')
+    // }
 }
+

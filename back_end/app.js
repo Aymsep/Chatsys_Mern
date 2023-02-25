@@ -9,8 +9,8 @@ const color = {
 
 
 const express = require('express');
-
-
+const cookiesParser = require('cookie-parser')
+const cors = require('cors')
 const app = express();
 const mongoose = require('mongoose');
 const jwt  = require('jsonwebtoken');
@@ -29,7 +29,11 @@ app.use((req, res, next) => {
     next();
 });
 
+
+app.use(cookiesParser())
 app.use(express.json())
+
+
 
 app.use('/',router)
 
