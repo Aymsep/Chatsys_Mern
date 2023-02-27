@@ -5,7 +5,7 @@ import { Usercontext } from '../../Usercontext';
 
 
 const Form = () => {
-    const {setusername,setid} = useContext(Usercontext)
+    const {setusername,setid,setToken} = useContext(Usercontext)
     const [isActive, setActive] = useState(false);
 
     
@@ -44,6 +44,7 @@ const Form = () => {
         const data = await response.json();
         setusername(data.fullname)
         setid(data.id)
+        setToken(data.token)
     }
 
     useEffect(() => {
@@ -70,7 +71,6 @@ const Form = () => {
   
   return (
     <div>
-              <h2>Weekly Coding Challenge #1: Sign in/up Form</h2>
    <div className={`container ${isActive ? 'right-panel-active' : ''}`} id="container">
 	<div className="form-container sign-up-container">
 		<form action="#">
