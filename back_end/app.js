@@ -14,7 +14,7 @@ const cors = require('cors')
 const app = express();
 const mongoose = require('mongoose');
 const jwt  = require('jsonwebtoken');
-
+const ws = require('ws');
 
 const dotenv = require('dotenv');
 dotenv.config()
@@ -48,15 +48,31 @@ mongoose.connect(process.env.MONGO_URL)
     console.error(error)
 })
 
-// mongoose.connect(process.env.MONGO_URL)
-// .then(()=>{
-    // console.log("connected to Database")
-// }).catch(err =>{
-    // console.log('not connected to Database')
-// })
 
 
-
-app.listen(PORT,()=>{
+const server = app.listen(PORT,()=>{
     console.log('listening on port : '+PORT);
+})
+
+const wss = new ws.WebSocketServer({server})
+wss.on('connection',(socket,req)=>{
+    console.log(color.fg.green,'websocket server connected  ✓')
+   socket.on('message',(message)=>{
+    const ws_token = `${message}`
+    if(ws_token){
+        jwt.verify(ws_token,process.env.JWT_SECRET_ACESS ,{},(err,userData)=>{
+            if(err) throw err;
+            const {userId,fullname} = userData
+            socket.userId = userId
+            socket.fullname = fullname
+            console.log(userId)
+        })
+    }
+    [...wss.clients].forEach(client=>{
+        console.log(client.fullname)
+        client.send(JSON.stringify({
+            online:[...wss.clients].map(c => ({fullname:c.fullname,userId:c.userId}))
+        }))
+    })
+   })
 })

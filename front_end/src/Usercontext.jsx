@@ -20,7 +20,7 @@ export function UserProvider({children}){
         )
         .then(res=>res.json())
         .then(data =>{
-            setid(data.id);
+            setid(data.userId);
             setusername(data.fullname);
         })
     },[])

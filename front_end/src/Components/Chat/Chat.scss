@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+*{
+    font-family: 'Montserrat', sans-serif;
+}
+svg{
+    vertical-align: middle;
+}
+.app__chat{
+   &-container{
+    
+    height: 100vh;
+    display:grid;
+    grid-template-columns: 25% 75%;
+   }
+   &-left{
+    padding: 15px;
+    background-color: rgb(213, 213, 255);
+    &-brand{
+        display: flex;
+        align-items: center;
+        gap:5px;
+        margin-bottom: 30px;
+        h1{
+            font-size:1.5rem;
+            color: rgb(90, 83, 220)
+        }
+        svg{
+            color: rgb(90, 83, 220);
+            font-size:2.5rem;
+        }
+    }
+    &-user{
+        display: flex;
+        margin-bottom: 30px;
+        align-items: center;
+        gap: 10px;
+        &-avatar{
+            text-align: center;
+            background-color: rgb(90, 83, 220);
+            width:45px;
+            height: 45px;
+            border-radius: 50%;
+            p{
+                transform: translateY(70%);
+                color: white;
+                font-weight: bold;
+                text-transform: capitalize;
+            }
+        }
+    }
+   }
+   &-right{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: rgb(90, 83, 220);
+    padding: 15px 15px 25px ;
+    h2{
+        color: whitesmoke;
+    }
+    &-inside{
+        display: flex;
+        align-items: center;
+        input{
+            border-radius: 4px;
+            width:90%;
+            height: 45px;
+            padding:8px;
+            font-size: 15px;
+        }
+        svg{
+            vertical-align: middle;
+            background-color:rgb(47, 47, 159);
+            margin-left: 10px;
+            height: 45px;
+            padding: 12px;
+            width:45px;
+            color: white;
+            border-radius: 4px;
+            font-size: 20px;
+            cursor: pointer;
+            &:active{
+                background-color:white;
+                color:rgb(47, 47, 159);
+            }
+        }
+    }
+   }
+}

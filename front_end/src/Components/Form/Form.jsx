@@ -43,7 +43,7 @@ const Form = () => {
             })
         const data = await response.json();
         setusername(data.fullname)
-        setid(data.id)
+        setid(data.userId)
         setToken(data.token)
     }
 
@@ -71,7 +71,7 @@ const Form = () => {
   
   return (
     <div>
-   <div className={`container ${isActive ? 'right-panel-active' : ''}`} id="container">
+   <div className={`app__form container ${isActive ? 'right-panel-active' : ''}`} id="container">
 	<div className="form-container sign-up-container">
 		<form action="#">
 			<h1>Create Account</h1>

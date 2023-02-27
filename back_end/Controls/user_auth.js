@@ -95,7 +95,6 @@ exports.getprofile =  (req, res, next) => {
         jwt.verify(token,process.env.JWT_SECRET_ACESS,{},(err,userData)=>{
             if(err) throw err;
             const {id,fullname} = userData
-            console.log('userdata: ' + userData)
             res.json(userData)
         })
     }else{
