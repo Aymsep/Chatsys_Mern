@@ -1,8 +1,8 @@
 import React,{useState,useEffect} from 'react'
 import './Chat.scss'
 import {MdOutlineArrowForwardIos} from 'react-icons/md'
-import {AiFillMessage} from 'react-icons/ai'
 import Avatar from '../Avatar/Avatar'
+import Logo from '../Logo/Logo'
 
 const Chat = ({username}) => {
     const [ws, setWs] = useState(null)
@@ -42,10 +42,7 @@ const Chat = ({username}) => {
   return (
     <div className="app__chat-container">
         <div className="app__chat-left">
-            <div className="app__chat-left-brand">
-                <AiFillMessage/>
-                <h1>ChatTogether</h1>
-            </div>
+           <Logo/>
             {
                 Object.keys(onlineUsers).map((userID,i) =>(
                     <div onClick={() => setSelectedUser(userID)} key={i} className={`app__chat-left-user ${userID==selectedUser?'app__chat-left-user-selected':''} `} >
