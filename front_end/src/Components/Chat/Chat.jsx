@@ -7,6 +7,10 @@ import Avatar from '../Avatar/Avatar'
 const Chat = ({username}) => {
     const [ws, setWs] = useState(null)
     const [onlineUsers, setOnlineUsers] = useState({})
+    const [selectedUser, setSelectedUser] = useState(null)
+
+
+
     useEffect(()=>{
         const ws = new WebSocket('ws://localhost:3005')
         ws.addEventListener('open', ()=>{
@@ -29,6 +33,12 @@ const Chat = ({username}) => {
             }
         }
     },[])
+
+    function selectContact(id) {
+
+    }
+
+    
   return (
     <div className="app__chat-container">
         <div className="app__chat-left">
@@ -37,10 +47,10 @@ const Chat = ({username}) => {
                 <h1>ChatTogether</h1>
             </div>
             {
-                Object.keys(onlineUsers).map((fullname,i) =>(
-                    <div key={i} className="app__chat-left-user" >
-                        <Avatar username={onlineUsers[fullname]}/>
-                        {onlineUsers[fullname]}
+                Object.keys(onlineUsers).map((userID,i) =>(
+                    <div onClick={() => setSelectedUser(userID)} key={i} className={`app__chat-left-user ${userID==selectedUser?'app__chat-left-user-selected':''} `} >
+                        <Avatar username={onlineUsers[userID]}/>
+                        <p>{onlineUsers[userID]}</p>
                         </div>
                 ))
             }

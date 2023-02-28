@@ -65,11 +65,9 @@ wss.on('connection',(socket,req)=>{
             const {userId,fullname} = userData
             socket.userId = userId
             socket.fullname = fullname
-            console.log(userId)
         })
     }
     [...wss.clients].forEach(client=>{
-        console.log(client.fullname)
         client.send(JSON.stringify({
             online:[...wss.clients].map(c => ({fullname:c.fullname,userId:c.userId}))
         }))

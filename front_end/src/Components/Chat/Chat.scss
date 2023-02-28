@@ -13,13 +13,14 @@ svg{
     grid-template-columns: 25% 75%;
    }
    &-left{
-    padding: 15px;
+    padding: 15px 0;
     background-color: rgb(213, 213, 255);
     &-brand{
         display: flex;
         align-items: center;
         gap:5px;
         margin-bottom: 30px;
+        padding:0 15px;
         h1{
             font-size:1.5rem;
             color: rgb(90, 83, 220)
@@ -31,17 +32,31 @@ svg{
     }
     &-user{
         display: flex;
-        margin-bottom: 30px;
+        margin-bottom: 15px;
         align-items: center;
         gap: 10px;
+        border-bottom: 1px solid rgba(170, 170, 170,0.2);
+        // padding-bottom:20px;
+        // padding-left: 15px;
+        padding: 15px;
+        cursor: pointer;
+        &-selected{
+            background-color:rgb(197, 184, 221);
+            width: 100%;
+        }
+        p{
+            font-size:1.2rem;
+        }
         &-avatar{
+            display: flex;
             text-align: center;
-            background-color: rgb(90, 83, 220);
+            background-color: rgb(110, 106, 184);
             width:45px;
             height: 45px;
             border-radius: 50%;
+            justify-content: center;
+            align-items: center;
             p{
-                transform: translateY(70%);
                 color: white;
                 font-weight: bold;
                 text-transform: capitalize;
