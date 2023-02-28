@@ -7,12 +7,11 @@ import Chat from "./Components/Chat/Chat";
 export default function Routes(){
     
     const {username,id,token} = useContext(Usercontext)
-    console.log(username)
     if(token !== null){
         localStorage.setItem('token', token)
     }
     if(username){
-        return <Chat username={username}/>
+        return <Chat username={username} id={id}/>
     }
     return (
         <Form/>

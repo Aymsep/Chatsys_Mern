@@ -3,11 +3,17 @@
 	box-sizing: border-box;
 }
 
-body > .app__form{
+body{
+	background-color: black;
+}
+
+
+.app__form{
+	width: 100%;
+	margin: 100px auto;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 100vh;
 }
 
 

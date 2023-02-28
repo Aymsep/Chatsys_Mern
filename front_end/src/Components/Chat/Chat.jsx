@@ -4,14 +4,25 @@ import {MdOutlineArrowForwardIos} from 'react-icons/md'
 import Avatar from '../Avatar/Avatar'
 import Logo from '../Logo/Logo'
 
-const Chat = ({username}) => {
+
+const Chat = ({username,id}) => {
     const [ws, setWs] = useState(null)
     const [onlineUsers, setOnlineUsers] = useState({})
     const [selectedUser, setSelectedUser] = useState(null)
-
-
-
+    const [newMessage, setNewMessage] = useState('')
+    let tkn = localStorage.getItem('token')
+    
     useEffect(()=>{
+        fetch('http://localhost:3005',{
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body:JSON.stringify({
+                tkn
+            })
+
+        })
+
+
         const ws = new WebSocket('ws://localhost:3005')
         ws.addEventListener('open', ()=>{
             const token = localStorage.getItem('token')
@@ -25,6 +36,7 @@ const Chat = ({username}) => {
                 users[userId] = fullname
             })
             setOnlineUsers(users)
+            console.log(onlineUsers)
         }
         function handleMessage(e){
             const msg = JSON.parse(e.data)
@@ -34,9 +46,18 @@ const Chat = ({username}) => {
         }
     },[])
 
-    function selectContact(id) {
-
+    function SendMessage(e){
+        e.preventDefault()
+        console.log(newMessage)
+        setNewMessage('')
+        ws.send(newMessage)
     }
+
+
+
+
+    const onlineUsersExceptLogged = {...onlineUsers}
+    delete onlineUsersExceptLogged[id]
 
     
   return (
@@ -44,7 +65,7 @@ const Chat = ({username}) => {
         <div className="app__chat-left">
            <Logo/>
             {
-                Object.keys(onlineUsers).map((userID,i) =>(
+                Object.keys(onlineUsersExceptLogged).map((userID,i) =>(
                     <div onClick={() => setSelectedUser(userID)} key={i} className={`app__chat-left-user ${userID==selectedUser?'app__chat-left-user-selected':''} `} >
                         <Avatar username={onlineUsers[userID]}/>
                         <p>{onlineUsers[userID]}</p>
@@ -53,11 +74,32 @@ const Chat = ({username}) => {
             }
         </div>
         <div className="app__chat-right">
-            <h2>Message with selected person</h2>
-            <div className="app__chat-right-inside">
-                <input type="text" placeholder='Type your message here' />
-                <MdOutlineArrowForwardIos/>
-            </div>
+            {
+                selectedUser && (
+                    <>
+                    <div className="app__chat-right-contact">
+                        {onlineUsersExceptLogged[selectedUser]}
+                    </div>
+                    <div className="app__chat-right-inside">
+                        <input 
+                        value={newMessage}
+                        onChange={(e)=>setNewMessage(e.target.value)}
+                        type="text" 
+                        placeholder='Type your message here' />
+                        <MdOutlineArrowForwardIos onClick={e=>SendMessage(e)}/>
+                    </div>
+                    </>
+                    
+                )
+            }
+            {
+                !selectedUser && (
+                    <div className="app__chat-right-center">
+                        <h2>&larr; Select a person from sidebar</h2>
+                    </div>
+                )
+            }
+            
 
         </div>
     </div>

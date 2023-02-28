@@ -7,7 +7,7 @@ const Logo = () => {
   return (
     <div className="app__chat-left-brand">
         <AiFillMessage/>
-        <h1>ChatTogether</h1>
+        <h1>ChaTogether</h1>
     </div>
   )
 }
