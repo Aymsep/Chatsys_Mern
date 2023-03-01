@@ -59,45 +59,10 @@ let isFirstMessageReceived = false;
 const wss = new ws.WebSocketServer({server})
 
 
-// wss.on('connection', (socket, req) => {
-//   console.log(color.fg.green, 'websocket server connected  ✓');
 
-//   socket.on('message', (message) => {
-//     if (!isFirstMessageReceived) {
-//       const ws_token = `${message}`;
-//       if (ws_token) {
-//         jwt.verify(ws_token, process.env.JWT_SECRET_ACESS, (err, decoded) => {
-//           if (err) throw err;
-
-//           const { userId, fullname } = decoded;
-//           socket.userId = userId;
-//           socket.fullname = fullname;
-//           console.log(`User ${fullname} connected`);
-//         });
-//       }
-//       isFirstMessageReceived = true;
-//     } else {
-//       console.log(`Received message: ${message}`);
-//     }
-//   });
-
-//   // Send list of online clients to all connected clients
-//   const onlineUsers = [...wss.clients].map(c => ({ fullname: c.fullname, userId: c.userId }));
-//   console.log(`Sending online users: ${JSON.stringify(onlineUsers)}`);
-//   socket.send(JSON.stringify({ online: onlineUsers }));
-// });
-
-let Flag = true
-
-if(Flag){
-
-}
 
 let receivedToken = false;
 
-function showclients() {
-  
-}
 
 
 
@@ -112,13 +77,13 @@ app.post('/', (req, res, next) => {
     res.send('Token received');
 });
 
-function someFunction() {
+function waitForToken() {
   return new Promise((resolve, reject) => {
-    // Check if the token_current variable is already updated
+
     if (token_current) {
       resolve(token_current);
     } else {
-      // Wait for the token_current variable to be updated
+
       const intervalId = setInterval(() => {
         if (token_current) {
           clearInterval(intervalId);
@@ -131,8 +96,8 @@ function someFunction() {
 
 wss.on('connection', (socket, req) => {
   console.log(color.fg.green, 'websocket server connected  ✓');
-  // Use the someFunction to wait for the token_current variable to be updated
-  someFunction().then((token) => {
+  waitForToken().then((token) => {
+
       if (token) {
         console.log('entered')
         receivedToken = true;
@@ -151,7 +116,14 @@ wss.on('connection', (socket, req) => {
     
   })
   socket.on('message',msg=>{
-    console.log(`token : ${msg}`)
+    const message_data = JSON.parse(msg.toString())
+    const {receiver,text} = message_data
+    if(receiver && text) {
+      [...wss.clients]
+      .filter(client => client.userId === receiver )
+      .forEach(client => client.send(JSON.stringify({text})))
+
+    }
   })
 });
 

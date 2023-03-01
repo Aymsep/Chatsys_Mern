@@ -71,6 +71,7 @@ exports.register = async (req, res, next) => {
         password: hashedpass
     })
     user.save().then(()=>{
+      console.log('done register')
         return res.status(200).json({
             fullname: user.fullname,
             id: user._id      

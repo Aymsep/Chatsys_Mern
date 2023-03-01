@@ -10,6 +10,7 @@ const Chat = ({username,id}) => {
     const [onlineUsers, setOnlineUsers] = useState({})
     const [selectedUser, setSelectedUser] = useState(null)
     const [newMessage, setNewMessage] = useState('')
+    const [message, setMessage] = useState([])
     let tkn = localStorage.getItem('token')
     
     useEffect(()=>{
@@ -24,10 +25,6 @@ const Chat = ({username,id}) => {
 
 
         const ws = new WebSocket('ws://localhost:3005')
-        ws.addEventListener('open', ()=>{
-            const token = localStorage.getItem('token')
-            ws.send(token)
-        })
         setWs(ws)
         ws.addEventListener('message', handleMessage)
         function showOnlineUsers(onlineUsers){
@@ -42,6 +39,8 @@ const Chat = ({username,id}) => {
             const msg = JSON.parse(e.data)
             if('online' in msg){
                 showOnlineUsers(msg.online)
+            }else{
+                setMessage((prev=>[...prev,{text:msg.text,isOur:false}]))
             }
         }
     },[])
@@ -50,11 +49,13 @@ const Chat = ({username,id}) => {
         e.preventDefault()
         console.log(newMessage)
         setNewMessage('')
-        ws.send(newMessage)
+        ws.send(JSON.stringify({
+                receiver:selectedUser,
+                text:newMessage
+        }))
+        setMessage((prev=>[...prev,{text:newMessage,isOur:true}]))
     }
-
-
-
+    console.log(message&&message)
 
     const onlineUsersExceptLogged = {...onlineUsers}
     delete onlineUsersExceptLogged[id]
@@ -76,10 +77,25 @@ const Chat = ({username,id}) => {
         <div className="app__chat-right">
             {
                 selectedUser && (
-                    <>
                     <div className="app__chat-right-contact">
-                        {onlineUsersExceptLogged[selectedUser]}
-                    </div>
+                    {onlineUsersExceptLogged[selectedUser]}
+                        </div>
+                )
+            }
+                {
+                    !!selectedUser && (
+                        <div className="">
+                            {message.map((msg,i)=>(
+                                <div key={i}  className="">
+                                    {msg.text}
+                                </div>
+                            ))}
+                        </div>
+                    )
+                }
+            {
+                selectedUser && (
+                    <>
                     <div className="app__chat-right-inside">
                         <input 
                         value={newMessage}
