@@ -5,12 +5,14 @@ import Avatar from '../Avatar/Avatar'
 import Logo from '../Logo/Logo'
 
 
+
 const Chat = ({username,id}) => {
     const [ws, setWs] = useState(null)
     const [onlineUsers, setOnlineUsers] = useState({})
     const [selectedUser, setSelectedUser] = useState(null)
     const [newMessage, setNewMessage] = useState('')
     const [message, setMessage] = useState([])
+    const [currentID, setCurrentID] = useState(id)
     let tkn = localStorage.getItem('token')
     
     useEffect(()=>{
@@ -33,34 +35,67 @@ const Chat = ({username,id}) => {
                 users[userId] = fullname
             })
             setOnlineUsers(users)
-            console.log(onlineUsers)
         }
         function handleMessage(e){
             const msg = JSON.parse(e.data)
             if('online' in msg){
                 showOnlineUsers(msg.online)
             }else{
-                setMessage((prev=>[...prev,{text:msg.text,isOur:false}]))
+                setMessage((prev=>[...prev,
+                    {
+                        text:msg.msg,
+                        isOur:false
+                    }
+                ]))
+                setCurrentID(msg.sendr && msg.sendr)
             }
         }
     },[])
-
-    function SendMessage(e){
+    function PressMessage(e){
+       if(e.key === 'Enter'){
         e.preventDefault()
-        console.log(newMessage)
         setNewMessage('')
         ws.send(JSON.stringify({
+                sender:id,
                 receiver:selectedUser,
                 text:newMessage
         }))
-        setMessage((prev=>[...prev,{text:newMessage,isOur:true}]))
+        setMessage((prev=>[...prev,
+            {
+            text:newMessage,
+            isOur:true,
+            sender:id,
+        }
+        ]))
+        setCurrentID(id)
+       }
     }
-    console.log(message&&message)
+    function SendMessage(e){
+        
+        e.preventDefault()
+        setNewMessage('')
+        ws.send(JSON.stringify({
+                sender:id,
+                receiver:selectedUser,
+                text:newMessage
+        }))
+        setMessage((prev=>[...prev,
+            {
+            text:newMessage,
+            isOur:true,
+            sender:id,
+        }
+        ]))
+        setCurrentID(id)
+
+    }
 
     const onlineUsersExceptLogged = {...onlineUsers}
     delete onlineUsersExceptLogged[id]
 
-    
+    console.log(`availble id :`,currentID )
+    console.log('my id : ',id)
+    console.log(message)
   return (
     <div className="app__chat-container">
         <div className="app__chat-left">
@@ -85,12 +120,13 @@ const Chat = ({username,id}) => {
                 {
                     !!selectedUser && (
                         <div className="">
-                            {message.map((msg,i)=>(
-                                <div key={i}  className="">
-                                    {msg.text}
+                        {message && message.map((msg,i)=>(
+                                <div key={i}  className={`${msg.sender == id?'app__chat-right-message':'app__chat-right-message-blue'  }`}>
+                                    <p>{msg.text}</p>
+                                    <p>{msg.sender}</p>
                                 </div>
-                            ))}
-                        </div>
+                                ))}
+                                </div>
                     )
                 }
             {
@@ -98,6 +134,7 @@ const Chat = ({username,id}) => {
                     <>
                     <div className="app__chat-right-inside">
                         <input 
+                        onKeyDown={(e)=>PressMessage(e)}
                         value={newMessage}
                         onChange={(e)=>setNewMessage(e.target.value)}
                         type="text" 

@@ -117,11 +117,16 @@ wss.on('connection', (socket, req) => {
   })
   socket.on('message',msg=>{
     const message_data = JSON.parse(msg.toString())
-    const {receiver,text} = message_data
+    console.log(message_data)
+    const {receiver,text,sender} = message_data
     if(receiver && text) {
       [...wss.clients]
       .filter(client => client.userId === receiver )
-      .forEach(client => client.send(JSON.stringify({text})))
+      .forEach(client => client.send(JSON.stringify({
+        msg:text,
+        receiver:receiver,
+        sendr:sender
+      })))
 
     }
   })
