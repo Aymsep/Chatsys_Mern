@@ -65,12 +65,13 @@ svg{
     }
    }
    &-right{
+    position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     background-color: rgb(90, 83, 220);
-    padding: 15px 15px 25px ;
+    padding: 0px 0 25px ;
     &-center{
         display: flex;
         justify-content: center;
@@ -82,9 +83,13 @@ svg{
         }
     }
     &-inside{
+        margin-top: auto;
         display: flex;
         align-items: center;
+        z-index: 10;
+
         input{
+            margin-left: 25px;
             border-radius: 4px;
             width:90%;
             height: 45px;
@@ -110,27 +115,45 @@ svg{
     }
     &-message{
         display: block;
-        float: right;
         clear: both;
-        border-radius: 3px;
+        border-radius: 15px 6px ;
         right: 0;
-        width: 250px;
+        width: 350px;
         height:auto;
-        padding:10px;
-        margin: 35px;
-        background-color:yellow;
-        color: black;
-    }   
-    &-message-blue{
-        float: left;
-        clear: both;
-        border-radius: 3px;
-        width: 250px;
-        height:auto;
-        padding:10px;
-        margin: 35px;
-        background-color:red;
-        color: black;
+        padding:13px;
+        margin: 15px;
+        color: white;
     }
+    &-message-current{
+        float: right;
+        background-color:rgb(185, 136, 223);
+    }   
+    &-message-receiver{
+        float: left;
+        background-color:rgb(97, 143, 87);
+    }
+    &-contact{
+        z-index: 10;
+        display: flex;
+        justify-content: flex-start;
+        gap: 15px;
+        align-items: center;
+        background-color:rgb(47, 47, 159);
+        padding: 25px ;
+        h3{
+            color: white;
+            letter-spacing:.8px;
+        }
+    }
+    &-area{
+        border: 1px solid red;
+        top: 60px;
+        margin-top:30px ;
+        position: absolute;
+        width: 100%;
+        height: 75%;
+        overflow: auto;
+    }
+   
    }
 }

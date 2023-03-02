@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect, useRef} from 'react'
 import './Chat.scss'
 import {MdOutlineArrowForwardIos} from 'react-icons/md'
 import Avatar from '../Avatar/Avatar'
@@ -7,14 +7,23 @@ import Logo from '../Logo/Logo'
 
 
 const Chat = ({username,id}) => {
+    const scroll = document.getElementById('scroll-message')
+    
+
     const [ws, setWs] = useState(null)
     const [onlineUsers, setOnlineUsers] = useState({})
     const [selectedUser, setSelectedUser] = useState(null)
     const [newMessage, setNewMessage] = useState('')
     const [message, setMessage] = useState([])
     const [currentID, setCurrentID] = useState(id)
+    const scroll_ref =useRef(null)
     let tkn = localStorage.getItem('token')
-    
+    useEffect(()=>{
+        if(scroll_ref.current){
+            let d = scroll_ref.current
+            d.scrollTop = d.scrollHeight;
+        }
+    },[message])
     useEffect(()=>{
         fetch('http://localhost:3005',{
             method: 'POST',
@@ -68,8 +77,9 @@ const Chat = ({username,id}) => {
         }
         ]))
         setCurrentID(id)
-       }
+        // scroll_ref.current.scrollIntoView({behavior:'smooth',block:'end'})
     }
+}
     function SendMessage(e){
         
         e.preventDefault()
@@ -113,17 +123,18 @@ const Chat = ({username,id}) => {
             {
                 selectedUser && (
                     <div className="app__chat-right-contact">
-                    {onlineUsersExceptLogged[selectedUser]}
+                        <Avatar username={onlineUsers[selectedUser]}/>
+                         <h3>{onlineUsersExceptLogged[selectedUser]}</h3>
                         </div>
                 )
             }
                 {
                     !!selectedUser && (
-                        <div className="">
+                        <div ref={scroll_ref}    id='scroll-message' className='app__chat-right-area'>
                         {message && message.map((msg,i)=>(
-                                <div key={i}  className={`${msg.sender == id?'app__chat-right-message':'app__chat-right-message-blue'  }`}>
+                            <div id="scroll-message" key={i}  className={`app__chat-right-message ${msg.sender == id?'app__chat-right-message-current':'app__chat-right-message-receiver'  }`}>
                                     <p>{msg.text}</p>
-                                    <p>{msg.sender}</p>
+                                    {/* <div id="refe" ref={scroll_ref}></div> */}
                                 </div>
                                 ))}
                                 </div>

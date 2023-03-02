@@ -23,6 +23,7 @@ const Form = () => {
           email: up_email.value,
           password: up_password.value
         })
+        
         })
         const {fullname,id} = await response.json()
         
