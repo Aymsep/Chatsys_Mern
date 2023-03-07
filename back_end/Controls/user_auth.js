@@ -102,3 +102,9 @@ exports.getprofile =  (req, res, next) => {
     }
 }
 
+
+exports.getmessage = (req, res, next) => {
+  let id = req.params
+  console.log(id)
+  res.status(200).json(id)
+}

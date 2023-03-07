@@ -121,7 +121,7 @@ svg{
         width: 350px;
         height:auto;
         padding:13px;
-        margin: 15px;
+        margin:10px 15px;
         color: white;
     }
     &-message-current{
@@ -146,7 +146,6 @@ svg{
         }
     }
     &-area{
-        border: 1px solid red;
         top: 60px;
         margin-top:30px ;
         position: absolute;

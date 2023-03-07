@@ -24,6 +24,13 @@ const Chat = ({username,id}) => {
             d.scrollTop = d.scrollHeight;
         }
     },[message])
+    
+    function connectsocket(){
+        const ws = new WebSocket('ws://localhost:3005')
+        setWs(ws)
+        ws.addEventListener('message', handleMessage)
+        ws.addEventListener('close', ()=> connectsocket())
+    }
     useEffect(()=>{
         fetch('http://localhost:3005',{
             method: 'POST',
@@ -31,35 +38,32 @@ const Chat = ({username,id}) => {
             body:JSON.stringify({
                 tkn
             })
-
         })
+        connectsocket()
+       
 
-
-        const ws = new WebSocket('ws://localhost:3005')
-        setWs(ws)
-        ws.addEventListener('message', handleMessage)
-        function showOnlineUsers(onlineUsers){
-            const users = {}
-            onlineUsers.forEach(({userId,fullname}) => {
-                users[userId] = fullname
-            })
-            setOnlineUsers(users)
-        }
-        function handleMessage(e){
-            const msg = JSON.parse(e.data)
-            if('online' in msg){
-                showOnlineUsers(msg.online)
-            }else{
-                setMessage((prev=>[...prev,
-                    {
-                        text:msg.msg,
-                        isOur:false
-                    }
-                ]))
-                setCurrentID(msg.sendr && msg.sendr)
-            }
-        }
     },[])
+    function showOnlineUsers(onlineUsers){
+        const users = {}
+        onlineUsers.forEach(({userId,fullname}) => {
+            users[userId] = fullname
+        })
+        setOnlineUsers(users)
+    }
+    function handleMessage(e){
+        const msg = JSON.parse(e.data)
+        if('online' in msg){
+            showOnlineUsers(msg.online)
+        }else{
+            setMessage((prev=>[...prev,
+                {
+                    text:msg.msg,
+                    isOur:false
+                }
+            ]))
+            setCurrentID(msg.sendr && msg.sendr)
+        }
+    }
     function PressMessage(e){
        if(e.key === 'Enter'){
         e.preventDefault()
@@ -77,7 +81,6 @@ const Chat = ({username,id}) => {
         }
         ]))
         setCurrentID(id)
-        // scroll_ref.current.scrollIntoView({behavior:'smooth',block:'end'})
     }
 }
     function SendMessage(e){
@@ -103,9 +106,18 @@ const Chat = ({username,id}) => {
     const onlineUsersExceptLogged = {...onlineUsers}
     delete onlineUsersExceptLogged[id]
 
-    console.log(`availble id :`,currentID )
-    console.log('my id : ',id)
-    console.log(message)
+    useEffect(()=>{
+        if(selectedUser){
+            fetch(`http://localhost:3005/message/${selectedUser}`)
+            .then(res=>res.json())
+            .then(res=>{
+                console.log(res)
+            })
+        }else{
+            console.log('nothing selected')
+        }
+    },[selectedUser])
+
   return (
     <div className="app__chat-container">
         <div className="app__chat-left">

@@ -111,7 +111,7 @@ wss.on('connection', (socket, req) => {
               online: [...wss.clients].map((c) => ({ fullname: c.fullname, userId: c.userId })),
             }));
           });
-        });
+        }) ;
       }   
     
   })
@@ -126,11 +126,14 @@ wss.on('connection', (socket, req) => {
         msg:text,
         receiver:receiver,
         sendr:sender
-      })))
+      })) )
 
-    }
+    } 
   })
-});
+  socket.on('close',()=>{
+    console.log('closed')
+  })
+}) ;
 
       
       
