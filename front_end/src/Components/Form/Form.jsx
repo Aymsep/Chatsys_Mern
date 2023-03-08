@@ -1,5 +1,7 @@
-import React,{useState,useEffect, useContext} from 'react'
+import React,{useState,useEffect,useRef, useContext} from 'react'
 import './Form.scss'
+
+import {useNavigate} from 'react-router-dom'
 
 import { Usercontext } from '../../Usercontext';
 
@@ -8,6 +10,16 @@ const Form = () => {
     const {setusername,setid,setToken} = useContext(Usercontext)
     const [isActive, setActive] = useState(false);
 
+    const [buttonclicked, setbuttonclicked] = useState(true)
+    const buttonref = useRef(null)
+
+    // useEffect(()=>{
+    //   if(buttonref.current && buttonclicked) {
+    //     console.log('clicked')
+    //     buttonref.current.click()
+
+    //   }
+    // },[buttonclicked])
     
     const handleSignup = async (e) => {
       e.preventDefault();
@@ -26,6 +38,9 @@ const Form = () => {
         
         })
         const {fullname,id} = await response.json()
+        if(fullname){
+           buttonref.current.click()
+        }
         
        
       }
@@ -104,7 +119,7 @@ const Form = () => {
 			<input  id="in_password" type="password" placeholder="Password" />
 
 			<a href="#">Forgot your password?</a>
-			<button onClick={(e)=>handleSignin(e)} >Sign In</button>
+			<button onClick={(e)=>handleSignin(e)}  >Sign In</button>
 		</form>
 	</div>
 	<div className="overlay-container">
@@ -112,7 +127,7 @@ const Form = () => {
 			<div className="overlay-panel overlay-left">
 				<h1>Welcome Back!</h1>
 				<p>To keep connected with us please login with your personal info</p>
-				<button className="ghost" id="signIn">Sign In</button>
+				<button className="ghost" id="signIn" ref={buttonref}>Sign In</button>
 			</div>
 			<div className="overlay-panel overlay-right">
 				<h1>Hello, Friend!</h1>

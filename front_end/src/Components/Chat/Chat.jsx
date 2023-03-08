@@ -9,7 +9,6 @@ import Logo from '../Logo/Logo'
 const Chat = ({username,id}) => {
     const scroll = document.getElementById('scroll-message')
     
-
     const [ws, setWs] = useState(null)
     const [onlineUsers, setOnlineUsers] = useState({})
     const [selectedUser, setSelectedUser] = useState(null)
@@ -18,6 +17,7 @@ const Chat = ({username,id}) => {
     const [currentID, setCurrentID] = useState(id)
     const scroll_ref =useRef(null)
     let tkn = localStorage.getItem('token')
+    const [receivedmsg, setreceivedmsg] = useState('')
     useEffect(()=>{
         if(scroll_ref.current){
             let d = scroll_ref.current
@@ -52,6 +52,7 @@ const Chat = ({username,id}) => {
     }
     function handleMessage(e){
         const msg = JSON.parse(e.data)
+        console.log(msg)
         if('online' in msg){
             showOnlineUsers(msg.online)
         }else{
@@ -106,17 +107,20 @@ const Chat = ({username,id}) => {
     const onlineUsersExceptLogged = {...onlineUsers}
     delete onlineUsersExceptLogged[id]
 
-    useEffect(()=>{
-        if(selectedUser){
-            fetch(`http://localhost:3005/message/${selectedUser}`)
-            .then(res=>res.json())
-            .then(res=>{
-                console.log(res)
-            })
-        }else{
-            console.log('nothing selected')
-        }
+
+    console.log('selected user : ',selectedUser)
+    useEffect(   ()=>{
+        const response =  fetch(`http://localhost:3005/message/${selectedUser}`,{
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')===null?null:localStorage.getItem('token')}`
+              }
+        }).then(res=>res.json())
+        .then(res=>{
+            setMessage(res)
+        })
     },[selectedUser])
+
 
   return (
     <div className="app__chat-container">

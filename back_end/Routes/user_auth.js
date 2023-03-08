@@ -6,6 +6,6 @@ const {validateToken} = require('../jwt')
 router.post('/register',auth.register)
 router.post('/login',auth.login)
 router.get('/profile',auth.getprofile)
-router.get('/message/:id',auth.getmessage)
+router.post('/message/:id',auth.getmessage)
 
 module.exports = router

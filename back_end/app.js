@@ -15,6 +15,8 @@ const app = express();
 const mongoose = require('mongoose');
 const jwt  = require('jsonwebtoken');
 const ws = require('ws');
+const Message = require('./Schemas/user_message')
+
 
 const dotenv = require('dotenv');
 dotenv.config()
@@ -115,17 +117,26 @@ wss.on('connection', (socket, req) => {
       }   
     
   })
-  socket.on('message',msg=>{
+  socket.on('message',async (msg) =>{
     const message_data = JSON.parse(msg.toString())
     console.log(message_data)
     const {receiver,text,sender} = message_data
+    console.log('receiver',receiver)
+    console.log('sender',sender)
+    console.log('text',text)
     if(receiver && text) {
+      const messagedoc = await Message.create({
+        sender,
+        receiver,
+        text
+      });
       [...wss.clients]
       .filter(client => client.userId === receiver )
       .forEach(client => client.send(JSON.stringify({
         msg:text,
         receiver:receiver,
-        sendr:sender
+        sendr:sender,
+        id:messagedoc._id
       })) )
 
     } 
@@ -135,5 +146,4 @@ wss.on('connection', (socket, req) => {
   })
 }) ;
 
-      
-      
+// Message.collection.remove()

@@ -4,7 +4,7 @@ const users = []
 const User_db = require('../Schemas/user_auth')
 const jwt = require("jsonwebtoken")
 const {createToken,validateToken}  =require("../jwt")
-
+const Message = require('../Schemas/user_message')
 
 
 
@@ -76,6 +76,7 @@ exports.register = async (req, res, next) => {
             fullname: user.fullname,
             id: user._id      
         })
+
     }).catch(err=>{
         return res.status(500).json({
             error:"choose another email"
@@ -94,7 +95,7 @@ exports.getprofile =  (req, res, next) => {
     if(token){
         jwt.verify(token,process.env.JWT_SECRET_ACESS,{},(err,userData)=>{
             if(err) throw err;
-            const {id,fullname} = userData
+            const {userId,fullname} = userData
             res.json(userData)
         })
     }else{
@@ -103,8 +104,20 @@ exports.getprofile =  (req, res, next) => {
 }
 
 
-exports.getmessage = (req, res, next) => {
-  let id = req.params
-  console.log(id)
-  res.status(200).json(id)
+exports.getmessage = async (req, res, next) => {
+  let id = req.params.id
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+  jwt.verify(token,process.env.JWT_SECRET_ACESS,{},async (err,userData)=>{
+    if(err) throw err;
+    const {userId,fullname} = await userData
+    const message = await  Message.find()
+    res.status(200).json(
+      message
+    )
+    
+})
 }
+
+
+// Message.collection.remove()
