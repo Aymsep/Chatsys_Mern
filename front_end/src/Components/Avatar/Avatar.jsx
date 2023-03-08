@@ -1,10 +1,10 @@
 import React from 'react'
 
-const Avatar = ({username}) => {
+const Avatar = ({username,notify}) => {
   return (
     <div className="app__chat-left-user-avatar">
         <p>{username && username[0]}</p>
-        <div>2</div>
+        <div>{notify && notify}</div>
     </div>
   )
 }

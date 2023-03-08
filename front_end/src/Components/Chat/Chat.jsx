@@ -17,7 +17,8 @@ const Chat = ({username,id}) => {
     const [currentID, setCurrentID] = useState(id)
     const scroll_ref =useRef(null)
     let tkn = localStorage.getItem('token')
-    const [receivedmsg, setreceivedmsg] = useState('')
+    const [receivedmsg, setreceivedmsg] = useState([])
+
     useEffect(()=>{
         if(scroll_ref.current){
             let d = scroll_ref.current
@@ -52,7 +53,6 @@ const Chat = ({username,id}) => {
     }
     function handleMessage(e){
         const msg = JSON.parse(e.data)
-        console.log(msg)
         if('online' in msg){
             showOnlineUsers(msg.online)
         }else{
@@ -63,8 +63,11 @@ const Chat = ({username,id}) => {
                 }
             ]))
             setCurrentID(msg.sendr && msg.sendr)
+            setreceivedmsg((prev)=> [...prev,msg.msg])
+            
         }
     }
+    console.log('received length : ',receivedmsg && receivedmsg)
     function PressMessage(e){
        if(e.key === 'Enter'){
         e.preventDefault()
@@ -108,7 +111,6 @@ const Chat = ({username,id}) => {
     delete onlineUsersExceptLogged[id]
 
 
-    console.log('selected user : ',selectedUser)
     useEffect(   ()=>{
         const response =  fetch(`http://localhost:3005/message/${selectedUser}`,{
             method: 'POST',
@@ -129,17 +131,18 @@ const Chat = ({username,id}) => {
             {
                 Object.keys(onlineUsersExceptLogged).map((userID,i) =>(
                     <div onClick={() => setSelectedUser(userID)} key={i} className={`app__chat-left-user ${userID==selectedUser?'app__chat-left-user-selected':''} `} >
-                        <Avatar username={onlineUsers[userID]}/>
+                        <Avatar notify={selectedUser?'':receivedmsg.length} username={onlineUsers[userID]}/>
                         <p>{onlineUsers[userID]}</p>
                         </div>
                 ))
             }
         </div>
+        
         <div className="app__chat-right">
             {
                 selectedUser && (
                     <div className="app__chat-right-contact">
-                        <Avatar username={onlineUsers[selectedUser]}/>
+                        <Avatar username={onlineUsers[selectedUser]}  />
                          <h3>{onlineUsersExceptLogged[selectedUser]}</h3>
                         </div>
                 )
@@ -169,8 +172,7 @@ const Chat = ({username,id}) => {
                         <MdOutlineArrowForwardIos onClick={e=>SendMessage(e)}/>
                     </div>
                     </>
-                    
-                )
+                ) 
             }
             {
                 !selectedUser && (
