@@ -8,7 +8,20 @@ import Logo from '../Logo/Logo'
 
 const Chat = ({username,id}) => {
     const scroll = document.getElementById('scroll-message')
-    
+    let time = new Date()
+    let timeNow = `${time.getHours()}:${time.getMinutes()}`
+
+    function GetTime(timestamp) {
+        console.log('time : ',timestamp)
+            let date = new Date(timestamp && timestamp)
+            const time = date.toLocaleTimeString('en-US', {timeStyle: 'short', hour12:false });
+            return time
+    }
+    // let v =  "2023-03-09T14:47:02.255Z"
+
+    // console.log(GetTime("2023-03-09T14:47:02.255Z"))
+
+
     const [ws, setWs] = useState(null)
     const [onlineUsers, setOnlineUsers] = useState({})
     const [selectedUser, setSelectedUser] = useState(null)
@@ -64,10 +77,10 @@ const Chat = ({username,id}) => {
             ]))
             setCurrentID(msg.sendr && msg.sendr)
             setreceivedmsg((prev)=> [...prev,msg.msg])
+
             
         }
     }
-    console.log('received length : ',receivedmsg && receivedmsg)
     function PressMessage(e){
        if(e.key === 'Enter'){
         e.preventDefault()
@@ -82,9 +95,12 @@ const Chat = ({username,id}) => {
             text:newMessage,
             isOur:true,
             sender:id,
+            createdAt:`${time.getHours()}:${time.getMinutes()}`,
         }
         ]))
         setCurrentID(id)
+        setSelectedUser(selectedUser && selectedUser)
+
     }
 }
     function SendMessage(e){
@@ -101,6 +117,7 @@ const Chat = ({username,id}) => {
             text:newMessage,
             isOur:true,
             sender:id,
+            createdAt:`${time.getHours()}:${time.getMinutes()}`,
         }
         ]))
         setCurrentID(id)
@@ -109,7 +126,6 @@ const Chat = ({username,id}) => {
 
     const onlineUsersExceptLogged = {...onlineUsers}
     delete onlineUsersExceptLogged[id]
-
 
     useEffect(   ()=>{
         const response =  fetch(`http://localhost:3005/message/${selectedUser}`,{
@@ -120,6 +136,7 @@ const Chat = ({username,id}) => {
         }).then(res=>res.json())
         .then(res=>{
             setMessage(res)
+            // console.log(res)
         })
         setreceivedmsg([])
     },[selectedUser])
@@ -158,7 +175,9 @@ const Chat = ({username,id}) => {
                         <div ref={scroll_ref}    id='scroll-message' className='app__chat-right-area'>
                         {message && message.map((msg,i)=>(
                             <div id="scroll-message" key={i}  className={`app__chat-right-message ${msg.sender == id?'app__chat-right-message-current':'app__chat-right-message-receiver'  }`}>
+                                {console.log("value : ",msg.createdAt)}
                                     <p>{msg.text}</p>
+                                    <span className='app__chat-right-message-time'>{timeNow}</span>
                                 </div>
                                 ))}
                                 </div>

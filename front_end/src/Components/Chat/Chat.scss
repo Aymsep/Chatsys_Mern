@@ -128,6 +128,7 @@ svg{
         }
     }
     &-message{
+        position: relative;
         display: block;
         clear: both;
         border-radius: 15px 6px ;
@@ -137,6 +138,13 @@ svg{
         padding:13px;
         margin: 10px 15px;
         color: white;
+    }
+    &-message-time{
+        color: white;
+        position: absolute;
+        font-size: 11px;
+        right: 8px;
+        bottom: 1px;
     }
     &-message-current{
         float: right;
