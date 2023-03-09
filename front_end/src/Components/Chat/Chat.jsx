@@ -123,10 +123,15 @@ const Chat = ({username,id}) => {
         })
     },[selectedUser])
 
+    function removeselected(e){
+        if(e.target == e.currentTarget){
+            setSelectedUser(null)
+        }
+    }
 
   return (
     <div className="app__chat-container">
-        <div className="app__chat-left">
+        <div className="app__chat-left" onClick={(e) =>removeselected(e)}>
            <Logo/>
             {
                 Object.keys(onlineUsersExceptLogged).map((userID,i) =>(
@@ -153,7 +158,6 @@ const Chat = ({username,id}) => {
                         {message && message.map((msg,i)=>(
                             <div id="scroll-message" key={i}  className={`app__chat-right-message ${msg.sender == id?'app__chat-right-message-current':'app__chat-right-message-receiver'  }`}>
                                     <p>{msg.text}</p>
-                                    {/* <div id="refe" ref={scroll_ref}></div> */}
                                 </div>
                                 ))}
                                 </div>
