@@ -121,6 +121,7 @@ const Chat = ({username,id}) => {
         .then(res=>{
             setMessage(res)
         })
+        setreceivedmsg([])
     },[selectedUser])
 
     function removeselected(e){
@@ -153,7 +154,7 @@ const Chat = ({username,id}) => {
                 )
             }
                 {
-                    !!selectedUser && (
+                    !!selectedUser  && (
                         <div ref={scroll_ref}    id='scroll-message' className='app__chat-right-area'>
                         {message && message.map((msg,i)=>(
                             <div id="scroll-message" key={i}  className={`app__chat-right-message ${msg.sender == id?'app__chat-right-message-current':'app__chat-right-message-receiver'  }`}>
@@ -161,7 +162,7 @@ const Chat = ({username,id}) => {
                                 </div>
                                 ))}
                                 </div>
-                    )
+                    ) 
                 }
             {
                 selectedUser && (
