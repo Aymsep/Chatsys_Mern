@@ -1,0 +1,18 @@
+.app__logout{
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 20px;
+    svg{
+        font-size: 2rem;
+        color: rgb(90, 83, 220);
+    }
+    button{
+        border: 1px solid rgb(90, 83, 220);
+        padding: 8px 25px;
+        border-radius:8px;
+        background-color: transparent;
+        cursor: pointer;
+    }
+}

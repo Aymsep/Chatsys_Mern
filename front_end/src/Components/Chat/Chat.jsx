@@ -3,6 +3,7 @@ import './Chat.scss'
 import {MdOutlineArrowForwardIos} from 'react-icons/md'
 import Avatar from '../Avatar/Avatar'
 import Logo from '../Logo/Logo'
+import Logout from '../Logout/Logout'
 
 
 
@@ -17,10 +18,6 @@ const Chat = ({username,id}) => {
             const time = date.toLocaleTimeString('en-US', {timeStyle: 'short', hour12:false });
             return time
     }
-    // let v =  "2023-03-09T14:47:02.255Z"
-
-    // console.log(GetTime("2023-03-09T14:47:02.255Z"))
-
 
     const [ws, setWs] = useState(null)
     const [onlineUsers, setOnlineUsers] = useState({})
@@ -159,6 +156,7 @@ const Chat = ({username,id}) => {
                         </div>
                 ))
             }
+        <Logout/>
         </div>
         
         <div className="app__chat-right">
@@ -177,7 +175,7 @@ const Chat = ({username,id}) => {
                             <div id="scroll-message" key={i}  className={`app__chat-right-message ${msg.sender == id?'app__chat-right-message-current':'app__chat-right-message-receiver'  }`}>
                                 {console.log("value : ",msg.createdAt)}
                                     <p>{msg.text}</p>
-                                    <span className='app__chat-right-message-time'>{timeNow}</span>
+                                    <span className='app__chat-right-message-time'>{GetTime(msg.createdAt) || timeNow}</span>
                                 </div>
                                 ))}
                                 </div>
@@ -206,7 +204,6 @@ const Chat = ({username,id}) => {
                 )
             }
             
-
         </div>
     </div>
   )
