@@ -2,7 +2,7 @@ import React from 'react'
 import './Logout.scss'
 import {FiUser} from 'react-icons/fi'
 
-const Logout = () => {
+const Logout = ({username}) => {
     function logout() {
         localStorage.removeItem('token')
         window.location.reload(false);
@@ -10,6 +10,7 @@ const Logout = () => {
   return (
     <div className="app__logout">
         <FiUser/>
+        {username}
         <button onClick={logout} >Logout</button>
     </div>
   )

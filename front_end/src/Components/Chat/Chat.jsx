@@ -18,7 +18,6 @@ const Chat = ({username,id}) => {
             const time = date.toLocaleTimeString('en-US', {timeStyle: 'short', hour12:false });
             return time
     }
-
     const [ws, setWs] = useState(null)
     const [onlineUsers, setOnlineUsers] = useState({})
     const [selectedUser, setSelectedUser] = useState(null)
@@ -28,7 +27,8 @@ const Chat = ({username,id}) => {
     const scroll_ref =useRef(null)
     let tkn = localStorage.getItem('token')
     const [receivedmsg, setreceivedmsg] = useState([])
-
+    
+    console.log(message)
     useEffect(()=>{
         if(scroll_ref.current){
             let d = scroll_ref.current
@@ -124,7 +124,7 @@ const Chat = ({username,id}) => {
     const onlineUsersExceptLogged = {...onlineUsers}
     delete onlineUsersExceptLogged[id]
 
-    useEffect(   ()=>{
+    useEffect(()=>{
         const response =  fetch(`http://localhost:3005/message/${selectedUser}`,{
             method: 'POST',
             headers: {
@@ -144,6 +144,7 @@ const Chat = ({username,id}) => {
         }
     }
 
+
   return (
     <div className="app__chat-container">
         <div className="app__chat-left" onClick={(e) =>removeselected(e)}>
@@ -156,7 +157,7 @@ const Chat = ({username,id}) => {
                         </div>
                 ))
             }
-        <Logout/>
+        <Logout username={username} />
         </div>
         
         <div className="app__chat-right">
