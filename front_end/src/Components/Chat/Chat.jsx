@@ -8,16 +8,17 @@ import Logout from '../Logout/Logout'
 
 
 const Chat = ({username,id}) => {
+
     const scroll = document.getElementById('scroll-message')
     let time = new Date()
     let timeNow = `${time.getHours()}:${time.getMinutes()}`
 
     function GetTime(timestamp) {
-        console.log('time : ',timestamp)
             let date = new Date(timestamp && timestamp)
             const time = date.toLocaleTimeString('en-US', {timeStyle: 'short', hour12:false });
             return time
     }
+    let tkn = localStorage.getItem('token')
     const [ws, setWs] = useState(null)
     const [onlineUsers, setOnlineUsers] = useState({})
     const [selectedUser, setSelectedUser] = useState(null)
@@ -25,10 +26,9 @@ const Chat = ({username,id}) => {
     const [message, setMessage] = useState([])
     const [currentID, setCurrentID] = useState(id)
     const scroll_ref =useRef(null)
-    let tkn = localStorage.getItem('token')
     const [receivedmsg, setreceivedmsg] = useState([])
+    const [file, setFile] = useState()
     
-    console.log(message)
     useEffect(()=>{
         if(scroll_ref.current){
             let d = scroll_ref.current
@@ -40,7 +40,9 @@ const Chat = ({username,id}) => {
         const ws = new WebSocket('ws://localhost:3005')
         setWs(ws)
         ws.addEventListener('message', handleMessage)
+        ws.addEventListener('message', getf)
         ws.addEventListener('close', ()=> connectsocket())
+       
     }
     useEffect(()=>{
         fetch('http://localhost:3005',{
@@ -54,6 +56,13 @@ const Chat = ({username,id}) => {
        
 
     },[])
+    function getf(e){
+        const blob = new Blob([e.data], { type: 'image/jpeg' });
+        // const img = document.createElement('img');
+        // img.src = URL.createObjectURL(blob);
+        // document.body.appendChild(img);
+        // console.log(blob)
+    }
     function showOnlineUsers(onlineUsers){
         const users = {}
         onlineUsers.forEach(({userId,fullname}) => {
@@ -101,23 +110,27 @@ const Chat = ({username,id}) => {
     }
 }
     function SendMessage(e){
-        
-        e.preventDefault()
-        setNewMessage('')
-        ws.send(JSON.stringify({
+
+            e.preventDefault()
+            setNewMessage('')
+            ws.send(JSON.stringify({
+                    sender:id,
+                    receiver:selectedUser,
+                    text:newMessage,
+                    file:{
+                        image:file.image,
+                        name:file.name
+                    }
+            }))
+            setMessage((prev=>[...prev,
+                {
+                text:newMessage,
+                isOur:true,
                 sender:id,
-                receiver:selectedUser,
-                text:newMessage
-        }))
-        setMessage((prev=>[...prev,
-            {
-            text:newMessage,
-            isOur:true,
-            sender:id,
-            createdAt:`${time.getHours()}:${time.getMinutes()}`,
-        }
-        ]))
-        setCurrentID(id)
+                createdAt:`${time.getHours()}:${time.getMinutes()}`,
+            }
+            ]))
+            setCurrentID(id)
 
     }
 
@@ -133,7 +146,6 @@ const Chat = ({username,id}) => {
         }).then(res=>res.json())
         .then(res=>{
             setMessage(res)
-            // console.log(res)
         })
         setreceivedmsg([])
     },[selectedUser])
@@ -141,6 +153,19 @@ const Chat = ({username,id}) => {
     function removeselected(e){
         if(e.target == e.currentTarget){
             setSelectedUser(null)
+        }
+    }
+
+    function selectFile(e){
+        console.log(e.target.files[0].name)
+        const reader = new FileReader()
+        reader.readAsDataURL(e.target?.files[0])
+        reader.onload = () => {
+            const image = reader.result.replace(/^data:image\/(png|jpg|jpeg);base64,/, '')
+            setFile({
+                image:image,
+                name:e.target.files[0].name
+            })
         }
     }
 
@@ -174,7 +199,6 @@ const Chat = ({username,id}) => {
                         <div ref={scroll_ref}    id='scroll-message' className='app__chat-right-area'>
                         {message && message.map((msg,i)=>(
                             <div id="scroll-message" key={i}  className={`app__chat-right-message ${msg.sender == id?'app__chat-right-message-current':'app__chat-right-message-receiver'  }`}>
-                                {console.log("value : ",msg.createdAt)}
                                     <p>{msg.text}</p>
                                     <span className='app__chat-right-message-time'>{GetTime(msg.createdAt) || timeNow}</span>
                                 </div>
@@ -192,6 +216,7 @@ const Chat = ({username,id}) => {
                         onChange={(e)=>setNewMessage(e.target.value)}
                         type="text" 
                         placeholder='Type your message here' />
+                        <input type="file"  onChange={(e)=>selectFile(e)}/>
                         <MdOutlineArrowForwardIos onClick={e=>SendMessage(e)}/>
                     </div>
                     </>

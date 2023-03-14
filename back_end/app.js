@@ -6,7 +6,9 @@ const color = {
 }
 
 
-
+const fs = require("fs");
+const path = require("path");
+const {buffer} = require('buffer')
 
 const express = require('express');
 const cookiesParser = require('cookie-parser')
@@ -62,7 +64,6 @@ const wss = new ws.WebSocketServer({server})
 
 
 
-
 let receivedToken = false;
 
 
@@ -99,7 +100,6 @@ function waitForToken() {
 wss.on('connection', (socket, req) => {
   console.log(color.fg.green, 'websocket server connected  ✓');
   waitForToken().then((token) => {
-
       if (token) {
         console.log('entered')
         receivedToken = true;
@@ -120,10 +120,19 @@ wss.on('connection', (socket, req) => {
   socket.on('message',async (msg) =>{
     const message_data = JSON.parse(msg.toString())
     console.log(message_data)
-    const {receiver,text,sender} = message_data
-    console.log('receiver',receiver)
-    console.log('sender',sender)
-    console.log('text',text)
+    const {receiver,text,sender,file} = message_data
+    if(file){
+      const imagebuffer = Buffer.from(file.image,'base64')
+      const filepath = path.join(__dirname,'images',file.name)
+      fs.writeFile(filepath, imagebuffer,(err)=>{
+        if(err){
+          return console.log('error iamge')
+        }else{
+          return console.log('image saved')
+        }
+      })
+    }
+   console.log('message : ',msg)
     if(receiver && text) {
       const messagedoc = await Message.create({
         sender,
@@ -141,9 +150,14 @@ wss.on('connection', (socket, req) => {
 
     } 
   })
+  // socket.on('connection',()=>{
+   
+  // })
   socket.on('close',()=>{
     console.log('closed')
   })
+
 }) ;
 
 // Message.collection.remove()
+
