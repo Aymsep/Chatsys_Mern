@@ -1,6 +1,7 @@
 import React from 'react'
 import './Logout.scss'
-import {FiUser} from 'react-icons/fi'
+import {MdLogout} from 'react-icons/md'
+import Avatar from '../Avatar/Avatar'
 
 const Logout = ({username}) => {
     function logout() {
@@ -9,9 +10,13 @@ const Logout = ({username}) => {
     }
   return (
     <div className="app__logout">
-        <FiUser/>
-        {username}
-        <button onClick={logout} >Logout</button>
+        <Avatar username={username} notify='admin'   />
+        <div className="labeled">
+        <label>{username}</label>
+        <span>Male</span>
+        </div>
+        <MdLogout onClick={logout} />
+        {/* <button onClick={logout} ></button> */}
     </div>
   )
 }
