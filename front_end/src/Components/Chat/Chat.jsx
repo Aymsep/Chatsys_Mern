@@ -1,10 +1,12 @@
 import React,{useState,useEffect, useRef} from 'react'
 import './Chat.scss'
 import {MdOutlineArrowForwardIos} from 'react-icons/md'
+import {ImAttachment} from 'react-icons/im'
 import Avatar from '../Avatar/Avatar'
 import Logo from '../Logo/Logo'
 import Logout from '../Logout/Logout'
-
+import { Buffer } from 'buffer';
+import imagee from '../../aym.png'
 
 
 
@@ -28,7 +30,7 @@ const Chat = ({username,id}) => {
     const [currentID, setCurrentID] = useState(id)
     const scroll_ref =useRef(null)
     const [receivedmsg, setreceivedmsg] = useState([])
-    const [imagesrc, setimagesrc] = useState(null)
+    const [imagesrc, setimagesrc] = useState()
     const [file, setFile] = useState()
     
     useEffect(()=>{
@@ -74,12 +76,20 @@ const Chat = ({username,id}) => {
         })
         setOnlineUsers(users)
     }
-
+    
     function handleMessage(e){
         const msg = JSON.parse(e.data)
         if(msg.image){
+            console.log(msg.image)
             const buffer = Buffer.from(msg.image,'base64')
-            setimagesrc(`data:image/png;base64,${msg.image}`);
+            console.log(buffer)
+            const img = `data:image/png;base64,${msg.image}`
+            setimagesrc(img);
+            setMessage((prev)=>[...prev,
+            {
+                image:img,
+                isOur:false,
+            }])
             
         }
         if('online' in msg){
@@ -119,20 +129,20 @@ const Chat = ({username,id}) => {
     }
 }
     function SendMessage(e){
-
             e.preventDefault()
             ws.send(JSON.stringify({
                     sender:id,
                     receiver:selectedUser,
                     text:newMessage,
                     file:{
-                        image:file.image,
-                        name:file.name
+                        image:file?.image,
+                        name:file?.name
                     }
             }))
             setMessage((prev=>[...prev,
                 {
-                text:newMessage || file.name,
+                image:message.image,
+                text:newMessage || file?.name,
                 isOur:true,
                 sender:id,
                 createdAt:`${time.getHours()}:${time.getMinutes()}`,
@@ -166,7 +176,6 @@ const Chat = ({username,id}) => {
     }
 
     function selectFile(e){
-        console.log(e.target.files[0].name)
         const reader = new FileReader()
         reader.readAsDataURL(e.target?.files[0])
         reader.onload = () => {
@@ -177,8 +186,8 @@ const Chat = ({username,id}) => {
             })
         }
     }
-console.log(message)
 
+    console.log(message)
   return (
     <div className="app__chat-container">
         <div className="app__chat-left" onClick={(e) =>removeselected(e)}>
@@ -206,17 +215,16 @@ console.log(message)
                 {
                     !!selectedUser  && (
                         <div ref={scroll_ref}    id='scroll-message' className='app__chat-right-area'>
-                        {message && message.map((msg,i)=>(
+                        {message && message.map((msg,i)=>{
+                            console.log(msg)
+                            return(
                             <div id="scroll-message" key={i}  className={`app__chat-right-message ${msg.sender == id?'app__chat-right-message-current':'app__chat-right-message-receiver'  }`}>
                                     <p>{msg.text}</p>
                                     <span className='app__chat-right-message-time'>{GetTime(msg.createdAt) || timeNow}</span>
+                                    <img src={imagesrc} alt=""  width={75} height={75}/>
                                 </div>
-                                ))}
-                                {
-                                    imagesrc && (
-                                        <img src={imagesrc} alt=""  width={75} height={75}/>
-                                    )
-                                }
+                            )
+                                })}
                                 </div>
                     )
                     
@@ -231,8 +239,15 @@ console.log(message)
                         onChange={(e)=>setNewMessage(e.target.value)}
                         type="text" 
                         placeholder='Type your message here' />
-                        <input type="file"  onChange={(e)=>selectFile(e)}/>
+                        <div className="app__chat-right-inside-svg">
+                        <label htmlFor="file_inp">
+                            <ImAttachment/>
+                        </label>
+
+                        <input className='hidden' type="file" id='file_inp'  onChange={(e)=>selectFile(e)}/>
+                        
                         <MdOutlineArrowForwardIos onClick={e=>SendMessage(e)}/>
+                        </div>
                     </div>
                     </>
                 ) 

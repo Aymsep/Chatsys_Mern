@@ -5,6 +5,9 @@
 svg{
     vertical-align: middle;
 }
+.hidden{
+    display: none;
+}
 .app__chat{
    &-container{
     
@@ -108,7 +111,7 @@ svg{
         z-index: 10;
 
         input{
-            margin-left: 25px;
+            margin-left: 20px;
             border-radius: 4px;
             width:90%;
             height: 45px;
@@ -116,9 +119,9 @@ svg{
             font-size: 15px;
         }
         svg{
+            margin-right: 4px;
             vertical-align: middle;
             background-color:rgb(47, 47, 159);
-            margin-left: 10px;
             height: 45px;
             padding: 12px;
             width:45px;
@@ -130,6 +133,12 @@ svg{
                 background-color:white;
                 color:rgb(47, 47, 159);
             }
+        }
+        &-svg{
+            margin-left: 15px;
+            display: flex;
+            gap: 0px;
+            justify-content: space-around;
         }
     }
     &-message{

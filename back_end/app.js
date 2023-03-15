@@ -144,18 +144,18 @@ wss.on('connection', (socket, req) => {
     }
    console.log('message : ',msg)
     if(receiver && text) {
-      const messagedoc = await Message.create({
-        sender,
-        receiver,
-        text
-      });
+      // const messagedoc = await Message.create({
+      //   sender,
+      //   receiver,
+      //   text
+      // });
       [...wss.clients]
       .filter(client => client.userId === receiver )
       .forEach(client => client.send(JSON.stringify({
         msg:text,
         receiver:receiver,
         sendr:sender,
-        id:messagedoc._id
+        // id:messagedoc._id
       })) )
 
     } 
