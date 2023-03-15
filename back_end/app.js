@@ -123,7 +123,16 @@ wss.on('connection', (socket, req) => {
     const {receiver,text,sender,file} = message_data
     if(file){
       const imagebuffer = Buffer.from(file.image,'base64')
-      const filepath = path.join(__dirname,'images',file.name)
+      const filepath = path.join(__dirname,'images',file.name);
+
+      [...wss.clients]
+      .filter(client => client.userId === receiver )
+      .forEach(client => client.send(JSON.stringify({
+        image:file.image,
+        receiver:receiver,
+        sendr:sender,
+      })) )
+
       fs.writeFile(filepath, imagebuffer,(err)=>{
         if(err){
           return console.log('error iamge')
@@ -131,6 +140,7 @@ wss.on('connection', (socket, req) => {
           return console.log('image saved')
         }
       })
+
     }
    console.log('message : ',msg)
     if(receiver && text) {

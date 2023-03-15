@@ -7,6 +7,7 @@ import Logout from '../Logout/Logout'
 
 
 
+
 const Chat = ({username,id}) => {
 
     const scroll = document.getElementById('scroll-message')
@@ -27,6 +28,7 @@ const Chat = ({username,id}) => {
     const [currentID, setCurrentID] = useState(id)
     const scroll_ref =useRef(null)
     const [receivedmsg, setreceivedmsg] = useState([])
+    const [imagesrc, setimagesrc] = useState(null)
     const [file, setFile] = useState()
     
     useEffect(()=>{
@@ -40,7 +42,7 @@ const Chat = ({username,id}) => {
         const ws = new WebSocket('ws://localhost:3005')
         setWs(ws)
         ws.addEventListener('message', handleMessage)
-        ws.addEventListener('message', getf)
+        // ws.addEventListener('message', getf)
         ws.addEventListener('close', ()=> connectsocket())
        
     }
@@ -56,13 +58,15 @@ const Chat = ({username,id}) => {
        
 
     },[])
-    function getf(e){
-        const blob = new Blob([e.data], { type: 'image/jpeg' });
-        // const img = document.createElement('img');
-        // img.src = URL.createObjectURL(blob);
-        // document.body.appendChild(img);
-        // console.log(blob)
-    }
+
+    // function getf(e){
+    //     const blob = new Blob([e.data], { type: 'image/jpeg' });
+    //     // const img = document.createElement('img');
+    //     // img.src = URL.createObjectURL(blob);
+    //     // document.body.appendChild(img);
+    //     // console.log(blob)
+    // }
+
     function showOnlineUsers(onlineUsers){
         const users = {}
         onlineUsers.forEach(({userId,fullname}) => {
@@ -70,8 +74,14 @@ const Chat = ({username,id}) => {
         })
         setOnlineUsers(users)
     }
+
     function handleMessage(e){
         const msg = JSON.parse(e.data)
+        if(msg.image){
+            const buffer = Buffer.from(msg.image,'base64')
+            setimagesrc(`data:image/png;base64,${msg.image}`);
+            
+        }
         if('online' in msg){
             showOnlineUsers(msg.online)
         }else{
@@ -83,18 +93,16 @@ const Chat = ({username,id}) => {
             ]))
             setCurrentID(msg.sendr && msg.sendr)
             setreceivedmsg((prev)=> [...prev,msg.msg])
-
-            
         }
     }
+
     function PressMessage(e){
        if(e.key === 'Enter'){
         e.preventDefault()
-        setNewMessage('')
         ws.send(JSON.stringify({
-                sender:id,
-                receiver:selectedUser,
-                text:newMessage
+            sender:id,
+            receiver:selectedUser,
+            text:newMessage
         }))
         setMessage((prev=>[...prev,
             {
@@ -103,16 +111,16 @@ const Chat = ({username,id}) => {
             sender:id,
             createdAt:`${time.getHours()}:${time.getMinutes()}`,
         }
-        ]))
-        setCurrentID(id)
-        setSelectedUser(selectedUser && selectedUser)
-
+    ]))
+    setCurrentID(id)
+    setSelectedUser(selectedUser && selectedUser)
+    setNewMessage('')
+    
     }
 }
     function SendMessage(e){
 
             e.preventDefault()
-            setNewMessage('')
             ws.send(JSON.stringify({
                     sender:id,
                     receiver:selectedUser,
@@ -124,13 +132,14 @@ const Chat = ({username,id}) => {
             }))
             setMessage((prev=>[...prev,
                 {
-                text:newMessage,
+                text:newMessage || file.name,
                 isOur:true,
                 sender:id,
                 createdAt:`${time.getHours()}:${time.getMinutes()}`,
             }
             ]))
             setCurrentID(id)
+            setNewMessage('')
 
     }
 
@@ -168,7 +177,7 @@ const Chat = ({username,id}) => {
             })
         }
     }
-
+console.log(message)
 
   return (
     <div className="app__chat-container">
@@ -203,8 +212,14 @@ const Chat = ({username,id}) => {
                                     <span className='app__chat-right-message-time'>{GetTime(msg.createdAt) || timeNow}</span>
                                 </div>
                                 ))}
+                                {
+                                    imagesrc && (
+                                        <img src={imagesrc} alt=""  width={75} height={75}/>
+                                    )
+                                }
                                 </div>
-                    ) 
+                    )
+                    
                 }
             {
                 selectedUser && (
