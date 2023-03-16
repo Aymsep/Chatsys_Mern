@@ -46,7 +46,6 @@ const Chat = ({username,id}) => {
         ws.addEventListener('message', handleMessage)
         // ws.addEventListener('message', getf)
         ws.addEventListener('close', ()=> connectsocket())
-       
     }
     useEffect(()=>{
         fetch('http://localhost:3005',{
@@ -61,13 +60,6 @@ const Chat = ({username,id}) => {
 
     },[])
 
-    // function getf(e){
-    //     const blob = new Blob([e.data], { type: 'image/jpeg' });
-    //     // const img = document.createElement('img');
-    //     // img.src = URL.createObjectURL(blob);
-    //     // document.body.appendChild(img);
-    //     // console.log(blob)
-    // }
 
     function showOnlineUsers(onlineUsers){
         const users = {}
@@ -119,7 +111,7 @@ const Chat = ({username,id}) => {
             text:newMessage,
             isOur:true,
             sender:id,
-            createdAt:`${time.getHours()}:${time.getMinutes()}`,
+            createdAt:time,
         }
     ]))
     setCurrentID(id)
@@ -134,18 +126,18 @@ const Chat = ({username,id}) => {
                     sender:id,
                     receiver:selectedUser,
                     text:newMessage,
-                    file:{
-                        image:file?.image,
-                        name:file?.name
-                    }
+                    // file:{
+                    //     image:file?.image,
+                    //     name:file?.name
+                    // }
             }))
             setMessage((prev=>[...prev,
                 {
-                image:message.image,
-                text:newMessage || file?.name,
+                // image:message.image,
+                text:newMessage ,
                 isOur:true,
                 sender:id,
-                createdAt:`${time.getHours()}:${time.getMinutes()}`,
+                createdAt:time,
             }
             ]))
             setCurrentID(id)
@@ -220,8 +212,8 @@ const Chat = ({username,id}) => {
                             return(
                             <div id="scroll-message" key={i}  className={`app__chat-right-message ${msg.sender == id?'app__chat-right-message-current':'app__chat-right-message-receiver'  }`}>
                                     <p>{msg.text}</p>
-                                    <span className='app__chat-right-message-time'>{GetTime(msg.createdAt) || timeNow}</span>
-                                    <img src={imagesrc} alt=""  width={75} height={75}/>
+                                    <span className='app__chat-right-message-time'>{ timeNow || GetTime(msg.createdAt)}</span>
+                                    {/* <img src={imagesrc} alt=""  width={75} height={75}/> */}
                                 </div>
                             )
                                 })}
@@ -245,7 +237,7 @@ const Chat = ({username,id}) => {
                         </label>
 
                         <input className='hidden' type="file" id='file_inp'  onChange={(e)=>selectFile(e)}/>
-                        
+
                         <MdOutlineArrowForwardIos onClick={e=>SendMessage(e)}/>
                         </div>
                     </div>

@@ -10,7 +10,7 @@ const Avatar = ({username,notify}) => {
           border:notify=='admin'?'':'1px solid white'
 
           }} >
-          {notify == 0 ||'admin' ? '':notify}
+          {notify == 0 ? '':notify=='admin'?'':notify}
           </div>
     </div>
   )
