@@ -7,6 +7,7 @@ import Logo from '../Logo/Logo'
 import Logout from '../Logout/Logout'
 import { Buffer } from 'buffer';
 import imagee from '../../aym.png'
+import beepSound from '../../audio/mixkit-correct-answer-tone-2870.wav';
 
 
 
@@ -32,6 +33,26 @@ const Chat = ({username,id}) => {
     const [receivedmsg, setreceivedmsg] = useState([])
     const [imagesrc, setimagesrc] = useState()
     const [file, setFile] = useState()
+    const [newMessageReceived, setNewMessageReceived] = useState(false);
+
+
+    const audioRef = useRef(null);
+
+    useEffect(() => {
+    audioRef.current = new Audio(beepSound);
+    audioRef.current.volume = 0.5; // Adjust the volume if needed
+
+    const playBeepSound = () => {
+        audioRef.current.play();
+    };
+
+    if (newMessageReceived) {
+        playBeepSound();
+        setNewMessageReceived(false);
+    }
+    }, [newMessageReceived]);
+
+    
     
     useEffect(()=>{
         if(scroll_ref.current){
@@ -95,6 +116,7 @@ const Chat = ({username,id}) => {
             ]))
             setCurrentID(msg.sendr && msg.sendr)
             setreceivedmsg((prev)=> [...prev,msg.msg])
+            setNewMessageReceived(true);
         }
     }
 
@@ -251,6 +273,7 @@ const Chat = ({username,id}) => {
                     </div>
                 )
             }
+            {selectedUser && <audio ref={audioRef} src={beepSound} />}
             
         </div>
     </div>

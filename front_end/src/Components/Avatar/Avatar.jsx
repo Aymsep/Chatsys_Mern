@@ -1,4 +1,5 @@
-import React from 'react'
+import React,{useEffect} from 'react'
+
 
 const Avatar = ({username,notify}) => {
   return (
