@@ -1,7 +1,7 @@
 const {sign,verify} = require('jsonwebtoken')
 const createToken = (user)=>{
     const accesToken = sign(
-        {fullname:user.fullname,id:user._id},
+        {fullname:user.fullname,id:user._id,image:user.image},
         process.env.JWT_SECRET
     )
     return accesToken;

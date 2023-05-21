@@ -1,5 +1,6 @@
 import React,{useState,useEffect,useRef, useContext} from 'react'
 import './Form.scss'
+import axios from 'axios'
 
 import {useNavigate} from 'react-router-dom'
 
@@ -23,27 +24,35 @@ const Form = () => {
     
     const handleSignup = async (e) => {
       e.preventDefault();
-      const up_name = document.getElementById('up_name')
-      const up_email = document.getElementById('up_email')
-      const up_password = document.getElementById('up_password')
-      
-      const response = await fetch('http://localhost:3005/register',{
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          name: up_name.value,
-          email: up_email.value,
-          password: up_password.value
-        })
-        
-        })
-        const {fullname,id} = await response.json()
-        if(fullname){
-           buttonref.current.click()
+      const up_name = document.getElementById('up_name').value;
+      const up_email = document.getElementById('up_email').value;
+      const up_password = document.getElementById('up_password').value;
+      const up_file = document.getElementById('up_file').files[0];
+    
+      const formData = new FormData();
+      formData.append('name', up_name);
+      formData.append('email', up_email);
+      formData.append('password', up_password);
+      formData.append('image', up_file);
+    
+      try {
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',// Set the correct Content-Type header
+            'Content-Type': 'multipart/form-data', // Set the correct Content-Type header
+          },
+        };
+    
+        const response = await axios.post('http://localhost:3005/register', formData, config);
+    
+        const { fullname, id } = response.data;
+        if (fullname) {
+          buttonref.current.click();
         }
-        
-       
+      } catch (error) {
+        console.error('Error signing up:', error);
       }
+    };
 
     const handleSignin = async (e)=>{
         e.preventDefault();
@@ -101,6 +110,7 @@ const Form = () => {
 			<input id='up_name' type="text" placeholder="Name" required/>
 			<input id='up_email' type="email" placeholder="Email" required/>
 			<input id='up_password' type="password" placeholder="Password" required />
+			<input id='up_file' type="file" placeholder="enter your image" required />
 
 			<button  onClick={(e) =>handleSignup(e)} >Sign Up</button>
 		</form>

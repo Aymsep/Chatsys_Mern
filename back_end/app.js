@@ -36,10 +36,12 @@ app.use((req, res, next) => {
 
 app.use(cookiesParser())
 app.use(express.json())
+app.use('/images', express.static(__dirname + '/images'));
 app.use(cors({ origin:'http://localhost:3000', credentials:true }))
 
 
-app.use('/',router)
+app.use('/',router) 
+
 
 
 mongoose.set('strictQuery', false)
@@ -105,12 +107,15 @@ wss.on('connection', (socket, req) => {
         receivedToken = true;
         jwt.verify(token, process.env.JWT_SECRET_ACESS, {}, (err, userData) => {
           if (err) throw err;
-          const { userId, fullname } = userData;
+          const { userId, fullname,image } = userData;
+          console.log('userimage ',image)
           socket.userId = userId;
           socket.fullname = fullname;
+          socket.image = image;
+
           [...wss.clients].forEach((client) => {
             client.send(JSON.stringify({
-              online: [...wss.clients].map((c) => ({ fullname: c.fullname, userId: c.userId })),
+              online: [...wss.clients].map((c) => ({ fullname: c.fullname, userId: c.userId,image:c.image })),
             }));
           });
         }) ;

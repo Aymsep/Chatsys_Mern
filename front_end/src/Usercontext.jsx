@@ -7,6 +7,7 @@ export const Usercontext = createContext({})
 export function UserProvider({children}){
     const [username, setusername] = useState(null)
     const [id,setid] = useState(null)
+    const [image, setimage] = useState(null)
     const [token, setToken] = useState(null)
     useEffect(()=>{ 
         fetch("http://localhost:3005/profile",
@@ -22,12 +23,13 @@ export function UserProvider({children}){
         .then(data =>{
             setid(data.userId);
             setusername(data.fullname);
+            setimage(data.image);
         })
     },[])
 
 
     return (
-    <Usercontext.Provider value={{setToken,token,username,setusername,id,setid}} >
+    <Usercontext.Provider value={{setToken,token,username,setusername,id,setid,image}} >
         {children}
     </Usercontext.Provider> 
     )

@@ -2,6 +2,8 @@ import React,{useState,useEffect, useRef} from 'react'
 import './Chat.scss'
 import {MdOutlineArrowForwardIos} from 'react-icons/md'
 import {ImAttachment} from 'react-icons/im'
+import {IoIosArrowDown} from 'react-icons/io'
+import {AiFillPlusCircle,AiOutlineSearch,AiFillSetting,AiFillStar,AiFillMessage,AiFillCheckCircle} from 'react-icons/ai'
 import Avatar from '../Avatar/Avatar'
 import Logo from '../Logo/Logo'
 import Logout from '../Logout/Logout'
@@ -11,8 +13,8 @@ import beepSound from '../../audio/mixkit-correct-answer-tone-2870.wav';
 
 
 
-const Chat = ({username,id}) => {
-
+const Chat = ({username,id,image}) => {
+    console.log('chat',username,id,image)
     const scroll = document.getElementById('scroll-message')
     let time = new Date()
     let timeNow = `${time.getHours()}:${time.getMinutes()}`
@@ -34,25 +36,31 @@ const Chat = ({username,id}) => {
     const [imagesrc, setimagesrc] = useState()
     const [file, setFile] = useState()
     const [newMessageReceived, setNewMessageReceived] = useState(false);
+    const [userimage, setuserimage] = useState(image && image)
 
+    const [otherUserIDs, setOtherUserIDs] = useState([]);
 
-    const audioRef = useRef(null);
-
-    useEffect(() => {
-    audioRef.current = new Audio(beepSound);
-    audioRef.current.volume = 0.5; // Adjust the volume if needed
-
-    const playBeepSound = () => {
-        audioRef.current.play();
-    };
-
-    if (newMessageReceived) {
-        playBeepSound();
-        setNewMessageReceived(false);
-    }
-    }, [newMessageReceived]);
+    const [otherimg, setotherimg] = useState(null)
 
     
+    
+    const audioRef = useRef(null);
+    
+    useEffect(() => {
+        audioRef.current = new Audio(beepSound);
+        audioRef.current.volume = 0.5; // Adjust the volume if needed
+        
+        const playBeepSound = () => {
+            audioRef.current.play();
+        };
+        
+        if (newMessageReceived) {
+            playBeepSound();
+            setNewMessageReceived(false);
+        }
+    }, [newMessageReceived]);
+    
+    console.log(message)
     
     useEffect(()=>{
         if(scroll_ref.current){
@@ -84,8 +92,8 @@ const Chat = ({username,id}) => {
 
     function showOnlineUsers(onlineUsers){
         const users = {}
-        onlineUsers.forEach(({userId,fullname}) => {
-            users[userId] = fullname
+        onlineUsers.forEach(({userId,fullname,image}) => {
+            users[userId] = [fullname,image]
         })
         setOnlineUsers(users)
     }
@@ -93,7 +101,6 @@ const Chat = ({username,id}) => {
     function handleMessage(e){
         const msg = JSON.parse(e.data)
         if(msg.image){
-            console.log(msg.image)
             const buffer = Buffer.from(msg.image,'base64')
             console.log(buffer)
             const img = `data:image/png;base64,${msg.image}`
@@ -200,29 +207,93 @@ const Chat = ({username,id}) => {
             })
         }
     }
+    useEffect(() => {
+        if (onlineUsers) {
+          const filteredIDs = Object.keys(onlineUsers).filter((userID) => userID !== currentID);
+          setOtherUserIDs(filteredIDs);
+        }
+      }, [onlineUsers, currentID]);
 
-    console.log(message)
+    // useEffect(() => {
+    //     const filteredIDs = Object.keys(onlineUsersExceptLogged).filter(
+    //       (userID) => userID !== currentID
+    //     );
+    //     setOtherUserIDs(filteredIDs);
+    //     console.log(otherUserIDs)
+    //   },[]);
+
   return (
     <div className="app__chat-container">
+        <div className="app__new">
+            <div className="new-image">
+                    <img src={`http://localhost:3005/images/${image}`} alt=""/>
+            </div>
+            <div className="hover-link-container">
+                <a href="#" className="hover-link">
+                    {username}
+                    <IoIosArrowDown/>
+                </a>
+            <div className="hover-content">Logout</div>
+    </div>
+            <a href="#" className="new-plus sv">
+                <AiFillPlusCircle/>
+            </a>
+
+            <a href="#" className="new-msg check-msg sv">
+                <AiFillMessage/>
+            </a>
+
+            <a href="#" className="new-check sv">
+                <AiFillCheckCircle/>
+                
+            </a>
+
+            <a href="#" className="new-star sv">
+                <AiFillStar/>
+            </a>
+
+            <a href="#" className="new-setting sv">
+                <AiFillSetting/>
+            </a>
+
+        </div>
         <div className="app__chat-left" onClick={(e) =>removeselected(e)}>
-           <Logo/>
-            {
-                Object.keys(onlineUsersExceptLogged).map((userID,i) =>(
-                    <div onClick={() => setSelectedUser(userID)} key={i} className={`app__chat-left-user ${userID==selectedUser?'app__chat-left-user-selected':''} `} >
-                        <Avatar notify={selectedUser?'':receivedmsg.length} username={onlineUsers[userID]}/>
-                        <p>{onlineUsers[userID]}</p>
+            <div className="search-input">
+                <AiOutlineSearch/>
+                <input type="text" placeholder='Search For User' />
+            </div>
+           
+           {
+                Object.keys(onlineUsersExceptLogged).map((userID, i) => {
+                    const userImage = onlineUsers[userID][1];
+                    const userName = onlineUsers[userID][0];
+                    return (
+                    <div
+                        onClick={() => setSelectedUser(userID)}
+                        key={i}
+                        className={`app__chat-left-user ${
+                        userID === selectedUser ? "app__chat-left-user-selected" : ""
+                        }`}
+                    >
+                        <div className="left-user-image">
+                                <Avatar notify={selectedUser ? "" : receivedmsg.length} image={userImage} />
                         </div>
-                ))
-            }
-        <Logout username={username} />
+                        <div className="left-user-info">
+                            <h2>{userName}</h2>
+                            <p>text lorem</p>
+                        </div>
+                    </div>
+                    );
+                })
+        }
         </div>
         
         <div className="app__chat-right">
             {
                 selectedUser && (
                     <div className="app__chat-right-contact">
-                        <Avatar username={onlineUsers[selectedUser]}  />
-                         <h3>{onlineUsersExceptLogged[selectedUser]}</h3>
+                        <Avatar username={onlineUsers[selectedUser]} image={onlineUsers[selectedUser][1]}   />
+                         <h3>{onlineUsersExceptLogged[selectedUser][0]}</h3>
                         </div>
                 )
             }
@@ -230,7 +301,6 @@ const Chat = ({username,id}) => {
                     !!selectedUser  && (
                         <div ref={scroll_ref}    id='scroll-message' className='app__chat-right-area'>
                         {message && message.map((msg,i)=>{
-                            console.log(msg)
                             return(
                             <div id="scroll-message" key={i}  className={`app__chat-right-message ${msg.sender == id?'app__chat-right-message-current':'app__chat-right-message-receiver'  }`}>
                                     <p>{msg.text}</p>

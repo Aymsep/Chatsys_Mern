@@ -10,6 +10,7 @@ const Message = require('../Schemas/user_message')
 
 
 
+
 exports.login = (req, res, next) => {
     User_db.findOne({ email: req.body.email })
       .then((user_check) => {
@@ -24,8 +25,9 @@ exports.login = (req, res, next) => {
               message: 'Password is incorrect',
             })
           }
+          console.log('jset ' , user_check)
           const token = jwt.sign(
-            { userId: user_check._id,fullname:user_check.fullname},
+            { userId: user_check._id,fullname:user_check.fullname,image:user_check.image},
             process.env.JWT_SECRET_ACESS,
             {expiresIn:'2d'}
           )
@@ -65,10 +67,12 @@ exports.login = (req, res, next) => {
 exports.register = async (req, res, next) => {
    try{
     const hashedpass = await bcrypt.hash(req.body.password,10)
+    console.log(req.file)
     const user  = new User_db ({
         fullname: req.body.name,
         email: req.body.email,
-        password: hashedpass
+        password: hashedpass,
+        image:req.file.filename,
     })
     user.save().then(()=>{
       console.log('done register')
@@ -95,7 +99,7 @@ exports.getprofile =  (req, res, next) => {
     if(token){
         jwt.verify(token,process.env.JWT_SECRET_ACESS,{},(err,userData)=>{
             if(err) throw err;
-            const {userId,fullname} = userData
+            const {userId,fullname,image} = userData
             res.json(userData)
         })
     }else{
@@ -120,4 +124,4 @@ exports.getmessage = async (req, res, next) => {
 }
 
 
-// User_db.collection.remove()
+// Message.collection.remove()

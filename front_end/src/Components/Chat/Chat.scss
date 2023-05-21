@@ -10,17 +10,16 @@ svg{
 }
 .app__chat{
    &-container{
-    
     height: 100vh;
     display:grid;
-    grid-template-columns: 25% 75%;
+    grid-template-columns: 100px 25% 1fr;
    }
    &-left{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 15px 0 0;
-    background-color: rgb(213, 213, 255);
+    padding: 15px 10px;
+    background-color: #101724;
     &-brand{
         display: flex;
         align-items: center;
@@ -37,7 +36,11 @@ svg{
         }
     }
     &-user{
+        height: 100px;
+        border-radius: 8px;
+        margin-top: 35px;
         display: flex;
+        justify-content: flex-start;
         margin-bottom: 15px;
         align-items: center;
         gap: 10px;
@@ -46,8 +49,12 @@ svg{
         // padding-left: 15px;
         padding: 15px;
         cursor: pointer;
+        background-color:#0e1830;
         &-selected{
-            background-color:rgb(197, 184, 221);
+            background: #000428;  /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
             width: 100%;
         }
         p{
@@ -57,21 +64,26 @@ svg{
             display: flex;
             text-align: center;
             background-color: rgb(110, 106, 184);
-            width:45px;
-            height: 45px;
+            width:60px;
+            height: 60px;
             border-radius: 50%;
             justify-content: center;
             align-items: center;
             position: relative;
-            p{
-                color: white;
-                font-weight: bold;
-                text-transform: capitalize;
+            background-size: 100%;
+            background-position: center top;
+            background-repeat: no-repeat;
+            div{
+               width: 105px;
+               height: 105px;
+               object-fit:cover !important;
+               clip-path: circle();
             }
             div{
                 position: absolute;
                 bottom:-0px;
                 right: 0rem;
+                z-index: 9999900;
                 height: 17px;
                 width: 17px;
                 border-radius: 50%;
@@ -90,7 +102,7 @@ svg{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    background-color: rgb(90, 83, 220);
+    background-color: #131a2b;
     padding: 0px 0 25px ;
     &-center{
         display: flex;
@@ -190,3 +202,147 @@ svg{
    
    }
 }
+
+
+
+
+
+
+
+.app__new{
+    padding: 20px 0;
+    background-color: #080e1a;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    .new-image{
+        width: 65px;
+        height: 65px;
+        img{
+            border: 3px solid rgba(187, 90, 0, 0.849);
+            width: 100%;
+            border-radius: 50%;
+            height: 100%;
+        }
+    }
+}
+
+
+.hover-link-container {
+    margin-top: 15px;
+    position: relative;
+    font-size: .9rem;
+  }
+  
+  .hover-link {
+    text-decoration: none;
+    transition: .3s ease-in-out;
+    color: white;
+    svg{
+        vertical-align: middle;
+        margin-left: 3px;
+    }
+  }
+  
+  .hover-content {
+    position: absolute;
+    top: -30px; /* Adjust the value to position the content according to your needs */
+    left: 0;
+    background-color: #f1f1f1;
+    padding: 5px;
+    border-radius: 5px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+  
+  .hover-link-container:hover .hover-content {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+.sv{
+    font-size: 1.7em;
+    color: #2a468393;
+    margin-bottom: 20px;
+    &:focus{
+        color: rgba(187, 90, 0, 0.849);
+    }
+}
+
+.new-plus{
+    margin-top: 65px;
+}
+  .new-setting{
+    margin-top: auto;
+  }
+  
+.check-msg{
+    color: rgba(187, 90, 0, 0.849);
+
+
+}
+  
+
+.search-input{
+    text-align: center;
+    input{
+        color: white;
+        background-color: transparent;
+        height: 20px;
+        border-left: 1px solid white;
+        padding-left: 15px;
+        &::placeholder{
+            color: white !important;
+        }
+    }
+    svg{
+        color: white;
+        margin-right: 8px;
+    }
+}
+
+
+.left-user-image{
+    width:60px;
+    height:60px;
+    clip-path: circle();
+    img{
+
+        width:100%;
+        height:100%;
+    }
+}
+  
+  
+.left-user-info{
+    margin-top: -15px;
+    h2{
+        color: white;
+        font-size:1.2rem;
+        line-height: 2.1rem;
+    }
+    p{
+        color:rgb(168, 167, 167);
+        font-size: .8rem;
+    }
+}
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -7,4 +7,5 @@ const user_message = mongoose.Schema({
 },{ timestamps: true })
 
 
+
 module.exports = mongoose.model('message',user_message)
